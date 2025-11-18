@@ -101,7 +101,30 @@ The survey collects data in a structured `SurveyResponse` object that includes:
 - Researchers can export all responses as CSV
 - All forms properly validated and connected
 
-## Getting Started
+## 🚀 Quick Start with GitHub Codespaces (Recommended)
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/keshavdubeyy/urm_project/codespaces)
+
+**GitHub Codespaces provides a complete development environment in the cloud:**
+
+1. **Click the badge above** or go to your repository
+2. **Click "Code" → "Codespaces" → "Create codespace"**
+3. **Wait for the environment to set up** (2-3 minutes)
+4. **Add environment variables** in the terminal:
+   ```bash
+   # Copy from .env.example and fill in your values
+   cp .env.example .env
+   nano .env  # Edit with your actual credentials
+   ```
+5. **Start the application:**
+   ```bash
+   npm run dev
+   ```
+6. **Access your app** at the forwarded port (Codespaces will notify you)
+
+**Your survey platform will be running and accessible to participants via the public Codespaces URL!**
+
+## 🛠️ Local Development
 
 ### Installation
 
@@ -109,8 +132,12 @@ The survey collects data in a structured `SurveyResponse` object that includes:
 # Install dependencies
 npm install
 
-# Initialize database (creates SQLite database)
-npx prisma migrate dev --name init
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your actual values
+
+# Initialize database
+npx prisma db push
 ```
 
 ### Development
