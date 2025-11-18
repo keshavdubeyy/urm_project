@@ -40,21 +40,28 @@ export default function Home() {
     <div className="apple-card p-8 space-y-6 animate-fade-in">
       <div className="text-center space-y-3">
         <h1 className="apple-heading-2">
-          User Research Methods Survey
-        </h1>
-        <p className="apple-body text-lg">
           Study on Task Approaches and Learning Experiences with Modern Generative Tools
-        </p>
+        </h1>
       </div>
 
       <div className="border-t border-apple-gray-200 pt-6 space-y-6">
+        {/* Header */}
+        <div className="space-y-3">
+          <h2 className="apple-heading-3">1. CONSENT FORM</h2>
+          <div className="space-y-1">
+            <p className="apple-body font-medium">Research Contact:</p>
+            <p className="apple-body">Student Researcher: [Your Name, Institution, Email ID]</p>
+            <p className="apple-body">Supervisor: [Supervisor Name, Email ID]</p>
+          </div>
+        </div>
+
         {/* Purpose */}
         <div className="space-y-3">
           <h3 className="apple-heading-4">Purpose of the Research</h3>
           <p className="apple-body">
-            This study aims to understand how individuals approach problem-solving tasks with and 
-            without the assistance of modern generative AI tools. We are interested in learning 
-            about your thought processes, experiences, and perceptions when working on academic tasks.
+            You are invited to participate in a research study about how students approach 
+            problem-solving tasks. We are interested in understanding the relationship between 
+            problem-solving strategies, feelings of confidence, and the use of modern technology.
           </p>
         </div>
 
@@ -62,21 +69,35 @@ export default function Home() {
         <div className="space-y-3">
           <h3 className="apple-heading-4">What You Will Be Asked to Do</h3>
           <p className="apple-body">
-            You will complete demographic questions, answer questionnaires about your attitudes 
-            toward AI and your problem-solving confidence, complete two problem-solving tasks 
-            (one without AI assistance and one with AI assistance), and reflect on your experience. 
-            The entire study will take approximately 30-45 minutes.
+            If you agree to participate, you will complete a four-part study lasting approximately 20–25 minutes:
           </p>
+          <ul className="apple-body space-y-2 ml-4">
+            <li className="flex items-start gap-2">
+              <span className="font-medium">First Survey:</span>
+              <span>Questions about study habits, technology feelings, current mood + a 1.5-minute creative warm-up task.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="font-medium">Main Task:</span>
+              <span>A second 1.5-minute creative task—one with AI and one without AI.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="font-medium">Second Survey:</span>
+              <span>Rate task difficulty, confidence, and mood immediately after each task.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="font-medium">Reflection:</span>
+              <span>Optional open-ended questions about your experience.</span>
+            </li>
+          </ul>
         </div>
 
         {/* Risks and benefits */}
         <div className="space-y-3">
           <h3 className="apple-heading-4">Risks and Benefits</h3>
           <p className="apple-body">
-            There are no anticipated risks beyond those encountered in everyday life. Your participation 
-            will contribute to research on human-AI interaction in academic contexts. You will not 
-            receive direct benefits, but your insights will help improve our understanding of learning 
-            experiences with AI tools.
+            Risks are minimal and similar to daily academic activities. You may not receive 
+            direct benefits, but your participation will advance research on learning and 
+            technology use.
           </p>
         </div>
 
@@ -84,8 +105,7 @@ export default function Home() {
         <div className="space-y-3">
           <h3 className="apple-heading-4">Voluntary Participation</h3>
           <p className="apple-body">
-            Your participation is completely voluntary. You may withdraw at any time without penalty. 
-            You may skip any questions you do not wish to answer.
+            Participation is voluntary. You may withdraw or skip any question at any time without penalty.
           </p>
         </div>
 
@@ -93,20 +113,27 @@ export default function Home() {
         <div className="space-y-3">
           <h3 className="apple-heading-4">Anonymity and Confidentiality</h3>
           <p className="apple-body">
-            Your responses will be kept confidential and anonymous. No personally identifiable 
-            information will be collected. All data will be stored securely and used only for 
-            research purposes.
+            No identifying information will be collected. All responses will remain anonymous 
+            and stored securely. Findings may be published, but never linked to individuals.
           </p>
         </div>
       </div>
 
-      {/* Consent selection */}
+      {/* Consent section */}
       <div className="border-t border-apple-gray-200 pt-6 space-y-4">
-        <div className="apple-card bg-apple-blue bg-opacity-5 border-apple-blue p-6 space-y-4">
-          <p className="apple-label text-base">
-            Please indicate your decision:
+        <div className="space-y-3">
+          <h3 className="apple-heading-4">Participant Consent</h3>
+          <p className="apple-body">
+            By clicking "I Agree," you confirm that:
           </p>
-          
+          <ul className="apple-body space-y-1 ml-6 list-disc">
+            <li>You have read and understood the information above.</li>
+            <li>You are 18 years of age or older.</li>
+            <li>You voluntarily agree to participate.</li>
+          </ul>
+        </div>
+
+        <div className="apple-card bg-apple-blue bg-opacity-5 border-apple-blue p-6 space-y-4">
           <div className="space-y-3">
             <label className={consent === true ? "apple-radio-card-selected" : "apple-radio-card"}>
               <input
@@ -118,7 +145,7 @@ export default function Home() {
                 className="apple-radio"
               />
               <span className="text-base text-apple-gray-900 font-medium select-none">
-                I Agree — I consent to participate in this research study
+                I Agree — I consent to participate.
               </span>
             </label>
 

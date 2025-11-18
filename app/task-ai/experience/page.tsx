@@ -21,7 +21,7 @@ export default function TaskAIExperiencePage() {
       !survey.taskAI.tlx?.effort ||
       !survey.taskAI.tlx?.frustration
     ) {
-      alert('Please complete all NASA-TLX ratings before continuing.');
+      alert('Please complete all workload assessment ratings before continuing.');
       return false;
     }
     
@@ -61,11 +61,11 @@ export default function TaskAIExperiencePage() {
       onNext={handleNext}
     >
       <div className="space-y-8">
-        {/* NASA-TLX Section */}
+        {/* Workload Assessment Section */
         <div className="apple-card bg-apple-gray-50 p-8 space-y-6">
           <div>
             <h3 className="apple-heading-4 mb-3">
-              Task Workload Assessment (NASA-TLX)
+              Workload Assessment
             </h3>
             <p className="apple-caption mb-6">
               Please rate the following aspects of the task you just completed.
