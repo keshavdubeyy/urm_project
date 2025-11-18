@@ -1,13 +1,7 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
   "env": {
-    "PRISMA_GENERATE_DATAPROXY": "true"
-  },
-  "installCommand": "npm install && npx prisma generate"
+    "PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING": "true"
+  }
 }
