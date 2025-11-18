@@ -47,7 +47,7 @@ export default function TaskAIActivityPage() {
         </div>
 
         {/* Timer */}
-        <Timer duration={180} onComplete={handleTimerComplete} isActive={isTimerActive} />
+        <Timer duration={90} onComplete={handleTimerComplete} isActive={isTimerActive} />
 
         {/* Time up message */}
         {isTimeUp && (

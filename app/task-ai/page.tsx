@@ -38,7 +38,7 @@ export default function TaskAIPage() {
               <ul className="space-y-3 apple-body text-green-800">
                 <li className="flex items-start gap-3">
                   <span className="text-green-600 font-bold text-lg">•</span>
-                  <span>For the next <strong>3 minutes</strong>, list as many uses as you can for a <strong>PAPERCLIP with AI support</strong>.</span>
+                  <span>For the next <strong>1.5 minutes</strong>, list as many uses as you can for a <strong>PAPERCLIP with AI support</strong>.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-600 font-bold text-lg">•</span>
@@ -59,7 +59,7 @@ export default function TaskAIPage() {
 
         <div className="apple-card bg-apple-blue bg-opacity-5 border-apple-blue p-6">
           <p className="apple-body text-apple-blue">
-            <strong>Note:</strong> Once you click "Start Task", the 3-minute timer will begin immediately. 
+            <strong>Note:</strong> Once you click "Start Task", the 1.5-minute timer will begin immediately. 
             You can open your AI tool in another tab or window. Make sure you're ready before proceeding.
           </p>
         </div>
