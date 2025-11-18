@@ -1,25 +1,48 @@
 {
   "name": "Survey Research Platform",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bullseye",
+  
   "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-vscode.vscode-typescript-next",
-        "bradlc.vscode-tailwindcss",
-        "esbenp.prettier-vscode"
-      ]
-    }
-  },
-  "forwardPorts": [3000],
+
+  "forwardPorts": [3000, 5432],
   "portsAttributes": {
     "3000": {
       "label": "Survey App",
-      "onAutoForward": "notify"
+      "onAutoForward": "openPreview"
     }
   },
-  "postCreateCommand": "npm install",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode", 
+        "ms-vscode.vscode-typescript-next",
+        "Prisma.prisma",
+        "ms-vscode.vscode-json",
+        "GitHub.copilot"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "typescript.preferences.importModuleSpecifier": "relative"
+      }
+    }
+  },
+
+  "postCreateCommand": "npm install && echo '🚀 Survey platform is ready! Run: npm run dev'",
+  "postStartCommand": "echo '✨ Codespace started! Your survey will be available at port 3000'",
+
   "remoteUser": "node"
 }
