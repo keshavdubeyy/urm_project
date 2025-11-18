@@ -1,0 +1,116 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"SF Pro Display"',
+          '"SF Pro Text"',
+          'system-ui',
+          'Helvetica Neue',
+          'Arial',
+          'sans-serif',
+        ],
+        'sf-display': ['"SF Pro Display"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        'sf-text': ['"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+      },
+      colors: {
+        apple: {
+          blue: '#007AFF',
+          'blue-dark': '#0051D5',
+          'blue-light': '#5AC8FA',
+          green: '#34C759',
+          indigo: '#5856D6',
+          orange: '#FF9500',
+          pink: '#FF2D55',
+          purple: '#AF52DE',
+          red: '#FF3B30',
+          teal: '#5AC8FA',
+          yellow: '#FFCC00',
+          gray: {
+            50: '#FAFAFA',
+            100: '#F5F5F7',
+            150: '#F2F2F7',
+            200: '#E5E5EA',
+            300: '#D1D1D6',
+            400: '#C7C7CC',
+            500: '#AEAEB2',
+            600: '#8E8E93',
+            700: '#636366',
+            800: '#48484A',
+            900: '#1D1D1F',
+          },
+        },
+      },
+      borderRadius: {
+        'apple': '12px',
+        'apple-sm': '8px',
+        'apple-md': '10px',
+        'apple-lg': '16px',
+        'apple-xl': '20px',
+        'apple-2xl': '24px',
+      },
+      borderWidth: {
+        '3': '3px',
+      },
+      boxShadow: {
+        'apple-xs': '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+        'apple-sm': '0 2px 8px 0 rgba(0, 0, 0, 0.06)',
+        'apple': '0 4px 16px 0 rgba(0, 0, 0, 0.08)',
+        'apple-md': '0 8px 24px 0 rgba(0, 0, 0, 0.10)',
+        'apple-lg': '0 12px 32px 0 rgba(0, 0, 0, 0.12)',
+        'apple-xl': '0 20px 48px 0 rgba(0, 0, 0, 0.14)',
+        'apple-inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '22': '5.5rem',
+        '88': '22rem',
+        '100': '25rem',
+        '120': '30rem',
+      },
+      fontSize: {
+        'xs': ['0.75rem', { lineHeight: '1rem', letterSpacing: '0.01em' }],
+        'sm': ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '0.01em' }],
+        'base': ['1rem', { lineHeight: '1.5rem', letterSpacing: '0.01em' }],
+        'lg': ['1.125rem', { lineHeight: '1.75rem', letterSpacing: '0.005em' }],
+        'xl': ['1.25rem', { lineHeight: '1.875rem', letterSpacing: '0.005em' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem', letterSpacing: '0.005em' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem', letterSpacing: '0.005em' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem', letterSpacing: '0' }],
+        '5xl': ['3rem', { lineHeight: '1', letterSpacing: '-0.01em' }],
+      },
+      transitionDuration: {
+        '250': '250ms',
+        '350': '350ms',
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'scale-in': 'scaleIn 0.2s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+      },
+    },
+  },
+  plugins: [],
+};

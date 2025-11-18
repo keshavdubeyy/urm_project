@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SurveyResponse {
+  id              String   @id @default(cuid())
+  responseId      String   @unique
+  consent         Boolean?
+  startTimestamp  String?
+  endTimestamp    String?
+  durationSeconds Int?
+
+  // Demographics (flattened)
+  age             Int?
+  gender          String?
+  genderSelfDescribe String?
+  educationLevel  String?
+  educationOther  String?
+  aiUseFrequency  Int?
+  aiToolMostUsed  String?
+
+  // Nested data as JSON
+  diaPre          String? // JSON string
+  gse             String? // JSON string
+  moodPre         String? // JSON string
+  taskNoAI        String? // JSON string
+  taskAI          String? // JSON string
+  diaPost         String? // JSON string
+  moodPost        String? // JSON string
+  reflections     String? // JSON string
+
+  createdAt       DateTime @default(now())
+}
