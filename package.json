@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "export-csv": "ts-node scripts/export-csv.ts",
-    "postinstall": "prisma generate",
+    "postinstall": "node ./scripts/postinstall.js",
     "db:deploy": "prisma migrate deploy",
     "db:setup": "prisma db push",
     "db:test": "ts-node scripts/test-db.ts"
