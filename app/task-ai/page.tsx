@@ -3,10 +3,29 @@
 import { useRouter } from "next/navigation";
 import StepLayout from "@/components/StepLayout";
 import { useSurvey } from "@/context/SurveyContext";
+import { getTaskDetails, getTaskNavigation } from "@/lib/experimentalDesign";
 
 export default function TaskAIPage() {
   const router = useRouter();
-  const { setSurvey } = useSurvey();
+  const { survey, setSurvey } = useSurvey();
+
+  // Determine if this is task 1 or task 2 based on experimental condition
+  const condition = survey.experimentalCondition;
+  const isTask1 = condition?.task1.condition === "AI";
+  const isTask2 = condition?.task2.condition === "AI";
+  
+  // Get task details based on which task this is
+  const taskDetails = condition && isTask1 
+    ? getTaskDetails(condition, 1)
+    : condition && isTask2 
+    ? getTaskDetails(condition, 2)
+    : null;
+
+  // Fallback for missing condition
+  const object = taskDetails?.object || "Paperclip";
+  const objectLabel = taskDetails?.objectLabel || "Object A";
+  const taskNumber = isTask1 ? "1" : isTask2 ? "2" : "B";
+  const objectEmoji = object === "Paperclip" ? "📎✨" : "🧱✨";
 
   const handleStartTask = () => {
     setSurvey((prev) => ({
@@ -19,18 +38,31 @@ export default function TaskAIPage() {
     router.push("/task-ai/activity");
   };
 
+  // Determine back href based on experimental condition
+  const getBackHref = () => {
+    if (!condition) return "/pre-task";
+    
+    const navigation = getTaskNavigation(condition);
+    if (isTask1) {
+      return "/pre-task";
+    } else {
+      // This is task 2, so back should go to task 1 experience page
+      return navigation.isFirstTaskNoAI ? "/task-no-ai/experience" : "/task-ai/experience";
+    }
+  };
+
   return (
     <StepLayout
-      currentStep={5}
+      currentStep={isTask1 ? 3 : 5}
       totalSteps={7}
-      stepTitle="Task B — Uses for a PAPERCLIP (With AI Support)"
-      backHref="/task-no-ai/experience"
+      stepTitle={`Task ${taskNumber} — Uses for ${object.toUpperCase()} (${objectLabel}) - With AI`}
+      backHref={getBackHref()}
       showNext={false}
     >
       <div className="space-y-6">
         <div className="apple-success-banner">
           <div className="flex items-start gap-4">
-            <div className="text-3xl">📎✨</div>
+            <div className="text-3xl">{objectEmoji}</div>
             <div className="flex-1 space-y-4">
               <h3 className="apple-heading-4 text-green-900">
                 Task Instructions
@@ -38,7 +70,7 @@ export default function TaskAIPage() {
               <ul className="space-y-3 apple-body text-green-800">
                 <li className="flex items-start gap-3">
                   <span className="text-green-600 font-bold text-lg">•</span>
-                  <span>For the next <strong>1.5 minutes</strong>, list as many uses as you can for a <strong>PAPERCLIP with AI support</strong>.</span>
+                  <span>For the next <strong>1.5 minutes</strong>, list as many uses as you can for <strong>{object.toUpperCase()} ({objectLabel}) with AI support</strong>.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-600 font-bold text-lg">•</span>

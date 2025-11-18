@@ -4,9 +4,32 @@ import StepLayout from "@/components/StepLayout";
 import TlxItem from "@/components/TlxItem";
 import LikertItem from "@/components/LikertItem";
 import { useSurvey } from "@/context/SurveyContext";
+import { getTaskNavigation, getTaskDetails } from "@/lib/experimentalDesign";
 
 export default function TaskNoAIExperiencePage() {
   const { survey, setSurvey } = useSurvey();
+
+  // Determine task info based on experimental condition
+  const condition = survey.experimentalCondition;
+  const isTask1 = condition?.task1.condition === "No-AI";
+  const isTask2 = condition?.task2.condition === "No-AI";
+  
+  const taskNumber = isTask1 ? "1" : isTask2 ? "2" : "A";
+  const currentStep = isTask1 ? 4 : 6;
+
+  // Determine next page based on experimental condition
+  const getNextHref = () => {
+    if (!condition) return "/task-ai"; // Fallback
+    
+    const navigation = getTaskNavigation(condition);
+    if (isTask1) {
+      // After task 1, go to task 2
+      return navigation.secondTask;
+    } else {
+      // After task 2, go to post-study
+      return "/post-study";
+    }
+  };
 
   const handleNext = () => {
     // Validate all TLX items are filled
@@ -37,10 +60,10 @@ export default function TaskNoAIExperiencePage() {
 
   return (
     <StepLayout
-      currentStep={4}
+      currentStep={currentStep}
       totalSteps={7}
-      stepTitle="Task A — Evaluation"
-      nextHref="/task-ai"
+      stepTitle={`Task ${taskNumber} — Evaluation`}
+      nextHref={getNextHref()}
       backHref="/task-no-ai/activity"
       onNext={handleNext}
     >

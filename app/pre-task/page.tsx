@@ -7,12 +7,22 @@ import { useSurvey } from "@/context/SurveyContext";
 export default function PreTaskPage() {
   const { survey, setSurvey } = useSurvey();
 
+  // Determine first task based on experimental condition
+  const getFirstTaskHref = () => {
+    if (!survey.experimentalCondition) {
+      return "/task-no-ai"; // Fallback
+    }
+    
+    const firstTaskCondition = survey.experimentalCondition.task1.condition;
+    return firstTaskCondition === "No-AI" ? "/task-no-ai" : "/task-ai";
+  };
+
   return (
     <StepLayout
       currentStep={2}
       totalSteps={7}
       stepTitle="Pre-Task Questionnaire"
-      nextHref="/task-no-ai"
+      nextHref={getFirstTaskHref()}
       backHref="/demographics"
     >
       <div className="space-y-8">

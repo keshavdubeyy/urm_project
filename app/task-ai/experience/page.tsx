@@ -6,10 +6,33 @@ import TlxItem from "@/components/TlxItem";
 import LikertItem from "@/components/LikertItem";
 import TextInput from "@/components/TextInput";
 import { useSurvey } from "@/context/SurveyContext";
+import { getTaskNavigation, getTaskDetails } from "@/lib/experimentalDesign";
 
 export default function TaskAIExperiencePage() {
   const { survey, setSurvey } = useSurvey();
   const [ideasError, setIdeasError] = useState<string | null>(null);
+
+  // Determine task info based on experimental condition
+  const condition = survey.experimentalCondition;
+  const isTask1 = condition?.task1.condition === "AI";
+  const isTask2 = condition?.task2.condition === "AI";
+  
+  const taskNumber = isTask1 ? "1" : isTask2 ? "2" : "B";
+  const currentStep = isTask1 ? 4 : 6;
+
+  // Determine next page based on experimental condition
+  const getNextHref = () => {
+    if (!condition) return "/post-study"; // Fallback
+    
+    const navigation = getTaskNavigation(condition);
+    if (isTask1) {
+      // After task 1, go to task 2
+      return navigation.secondTask;
+    } else {
+      // After task 2, go to post-study
+      return "/post-study";
+    }
+  };
 
   const handleNext = () => {
     // Validate all TLX items are filled
@@ -53,10 +76,10 @@ export default function TaskAIExperiencePage() {
 
   return (
     <StepLayout
-      currentStep={5}
+      currentStep={currentStep}
       totalSteps={7}
-      stepTitle="Task B — Evaluation"
-      nextHref="/post-study"
+      stepTitle={`Task ${taskNumber} — Evaluation`}
+      nextHref={getNextHref()}
       backHref="/task-ai/activity"
       onNext={handleNext}
     >

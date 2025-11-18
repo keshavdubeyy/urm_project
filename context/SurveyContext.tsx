@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { SurveyResponse, getEmptySurveyResponse } from "@/types/survey";
+import { generateExperimentalCondition, logExperimentalCondition } from "@/lib/experimentalDesign";
 
 interface SurveyContextType {
   survey: SurveyResponse;
@@ -28,9 +29,19 @@ export function SurveyProvider({ children }: { children: React.ReactNode }) {
       if (prev.startTimestamp) {
         return prev; // Already started
       }
+      
+      // Generate experimental condition when study starts
+      const experimentalCondition = generateExperimentalCondition();
+      
+      // Log for debugging (remove in production)
+      if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+        logExperimentalCondition(experimentalCondition);
+      }
+      
       return {
         ...prev,
         startTimestamp: new Date().toISOString(),
+        experimentalCondition,
       };
     });
   }, []);

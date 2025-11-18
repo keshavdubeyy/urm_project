@@ -1,3 +1,18 @@
+export interface ExperimentalCondition {
+  group: "Order A" | "Order B";
+  objectAssignment: "Paperclip=ObjectA" | "Brick=ObjectA";
+  task1: {
+    condition: "No-AI" | "AI";
+    object: "Paperclip" | "Brick";
+    objectLabel: "Object A" | "Object B";
+  };
+  task2: {
+    condition: "No-AI" | "AI";
+    object: "Paperclip" | "Brick";
+    objectLabel: "Object A" | "Object B";
+  };
+}
+
 export interface SurveyResponse {
   // Top-level fields
   responseId: string;
@@ -5,6 +20,9 @@ export interface SurveyResponse {
   endTimestamp?: string;
   durationSeconds?: number;
   consent?: boolean;
+  
+  // Experimental design
+  experimentalCondition?: ExperimentalCondition;
 
   // Demographics
   age?: number;
