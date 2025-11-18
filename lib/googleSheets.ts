@@ -1,5 +1,5 @@
 import { google } from 'googleapis';
-import { SurveyData } from '@/types/survey';
+import { SurveyResponse } from '@/types/survey';
 
 // Initialize Google Sheets API
 const getGoogleSheetsClient = () => {
@@ -10,18 +10,17 @@ const getGoogleSheetsClient = () => {
     throw new Error('Google Sheets credentials not configured');
   }
 
-  const auth = new google.auth.JWT(
-    clientEmail,
-    undefined,
-    privateKey,
-    ['https://www.googleapis.com/auth/spreadsheets']
-  );
+  const auth = new google.auth.JWT({
+    email: clientEmail,
+    key: privateKey,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets']
+  });
 
   return google.sheets({ version: 'v4', auth });
 };
 
 // Convert survey data to CSV row format
-export const formatSurveyForSheets = (survey: SurveyData & { id?: string; createdAt?: Date }): (string | number | boolean)[] => {
+export const formatSurveyForSheets = (survey: SurveyResponse & { id?: string; createdAt?: Date }): (string | number | boolean)[] => {
   const createdAt = survey.createdAt ? survey.createdAt.toISOString() : new Date().toISOString();
   
   return [
@@ -109,7 +108,7 @@ export const formatSurveyForSheets = (survey: SurveyData & { id?: string; create
 };
 
 // Write survey response to Google Sheets
-export const appendToGoogleSheets = async (survey: SurveyData & { id?: string; createdAt?: Date }): Promise<boolean> => {
+export const appendToGoogleSheets = async (survey: SurveyResponse & { id?: string; createdAt?: Date }): Promise<boolean> => {
   try {
     if (!process.env.GSHEETS_SPREADSHEET_ID) {
       console.warn('Google Sheets not configured - skipping sheet append');
