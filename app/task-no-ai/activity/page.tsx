@@ -4,12 +4,31 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Timer from "@/components/Timer";
 import { useSurvey } from "@/context/SurveyContext";
+import { getTaskDetails } from "@/lib/experimentalDesign";
 
 export default function TaskNoAIActivityPage() {
   const router = useRouter();
   const { survey, setSurvey } = useSurvey();
   const [isTimerActive, setIsTimerActive] = useState(true);
   const [isTimeUp, setIsTimeUp] = useState(false);
+
+  // Determine task info based on experimental condition
+  const condition = survey.experimentalCondition;
+  const isTask1 = condition?.task1.condition === "No-AI";
+  const isTask2 = condition?.task2.condition === "No-AI";
+  
+  // Get task details
+  const taskDetails = condition && isTask1 
+    ? getTaskDetails(condition, 1)
+    : condition && isTask2 
+    ? getTaskDetails(condition, 2)
+    : null;
+
+  // Fallback for missing condition
+  const object = taskDetails?.object || "Paperclip";
+  const objectLabel = taskDetails?.objectLabel || "Object A";
+  const taskNumber = isTask1 ? "1" : isTask2 ? "2" : "A";
+  const currentStep = isTask1 ? 3 : 5;
 
   const handleTimerComplete = () => {
     setIsTimeUp(true);
@@ -35,13 +54,13 @@ export default function TaskNoAIActivityPage() {
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-semibold text-apple-gray-600 tracking-tight">Progress</span>
             <span className="text-sm font-bold text-apple-gray-900">
-              Step 4 of 7
+              Step {currentStep + 1} of 7
             </span>
           </div>
           <div className="apple-progress-bar">
             <div
               className="apple-progress-fill"
-              style={{ width: `${(4 / 7) * 100}%` }}
+              style={{ width: `${((currentStep + 1) / 7) * 100}%` }}
             />
           </div>
         </div>
@@ -61,7 +80,7 @@ export default function TaskNoAIActivityPage() {
         {/* Task content */}
         <div className="apple-card p-8 sm:p-10 lg:p-12">
           <h2 className="apple-heading-3 mb-8">
-            Task A — Uses for a PAPERCLIP (No AI)
+            Task {taskNumber} — Uses for {object.toUpperCase()} ({objectLabel}) - Without AI
           </h2>
 
           <div className="space-y-6">
