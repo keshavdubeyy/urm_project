@@ -184,7 +184,7 @@ export default function PreTaskPage() {
 
           <div className="space-y-6">
             <LikertItem
-              label="I feel tense."
+              label="I feel tense — You feel tight, stiff, or under pressure."
               minLabel="Not at all"
               maxLabel="Extremely"
               value={survey.moodPre.tense}
@@ -197,7 +197,7 @@ export default function PreTaskPage() {
             />
 
             <LikertItem
-              label="I feel fatigued."
+              label="I feel fatigued — You feel tired, drained, or low on energy."
               minLabel="Not at all"
               maxLabel="Extremely"
               value={survey.moodPre.fatigued}
@@ -210,7 +210,7 @@ export default function PreTaskPage() {
             />
 
             <LikertItem
-              label="I feel anxious."
+              label="I feel anxious — You feel nervous, tense, or uneasy."
               minLabel="Not at all"
               maxLabel="Extremely"
               value={survey.moodPre.anxious}
@@ -223,7 +223,7 @@ export default function PreTaskPage() {
             />
 
             <LikertItem
-              label="I feel vigorous."
+              label="I feel vigorous — You feel active, energetic, and ready."
               minLabel="Not at all"
               maxLabel="Extremely"
               value={survey.moodPre.vigorous}

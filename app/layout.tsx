@@ -23,8 +23,8 @@ export default function RootLayout({
             {/* Top Bar */}
             <header className="apple-card rounded-none border-x-0 border-t-0 py-6 px-4 sm:px-6 lg:px-8">
               <div className="max-w-4xl mx-auto">
-                <h1 className="apple-heading-4 text-center">
-                  Study on Task Approaches and Learning Experiences with Modern Generative Tools
+                <h1 className="apple-heading-4">
+                  Group 6
                 </h1>
               </div>
             </header>

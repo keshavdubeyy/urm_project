@@ -50,8 +50,8 @@ export default function Home() {
           <h2 className="apple-heading-3">1. CONSENT FORM</h2>
           <div className="space-y-1">
             <p className="apple-body font-medium">Research Contact:</p>
-            <p className="apple-body">Student Researcher: [Your Name, Institution, Email ID]</p>
-            <p className="apple-body">Supervisor: [Supervisor Name, Email ID]</p>
+            <p className="apple-body">Student Researcher: Aasritha Kalluri, Kaushal Negi, Keshav Dubey</p>
+            <p className="apple-body">Supervisor: Ms. Priyanka Srivastava</p>
           </div>
         </div>
 
@@ -69,7 +69,7 @@ export default function Home() {
         <div className="space-y-3">
           <h3 className="apple-heading-4">What You Will Be Asked to Do</h3>
           <p className="apple-body">
-            If you agree to participate, you will complete a four-part study lasting approximately 20–25 minutes:
+            If you agree to participate, you will complete a four-part study lasting approximately <strong>20–25 minutes</strong>:
           </p>
           <ul className="apple-body space-y-2 ml-4">
             <li className="flex items-start gap-2">
@@ -105,7 +105,7 @@ export default function Home() {
         <div className="space-y-3">
           <h3 className="apple-heading-4">Voluntary Participation</h3>
           <p className="apple-body">
-            Participation is voluntary. You may withdraw or skip any question at any time without penalty.
+            <strong>Participation is voluntary.</strong> You may <strong>withdraw or skip any question at any time</strong> without penalty.
           </p>
         </div>
 
@@ -113,8 +113,8 @@ export default function Home() {
         <div className="space-y-3">
           <h3 className="apple-heading-4">Anonymity and Confidentiality</h3>
           <p className="apple-body">
-            No identifying information will be collected. All responses will remain anonymous 
-            and stored securely. Findings may be published, but never linked to individuals.
+            <strong>No identifying information will be collected.</strong> All responses will remain <strong>anonymous</strong> 
+            and stored securely. <strong>All data collected</strong> (responses, timestamps, task completions) will be kept confidential. Findings may be published, but never linked to individuals.
           </p>
         </div>
       </div>

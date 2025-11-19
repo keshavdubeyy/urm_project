@@ -278,8 +278,7 @@ export default function PostStudyPage() {
 
         <div className="apple-card bg-apple-blue bg-opacity-5 border-apple-blue p-6">
           <p className="apple-body text-apple-blue">
-            <strong>Note:</strong> When you click "Submit & Finish", your responses will be saved 
-            to the database and you will be taken to a thank you page.
+            <strong>Note:</strong> After you submit, your responses will be saved and cannot be changed.
           </p>
           {error && (
             <div className="apple-error-banner mt-4">

@@ -52,7 +52,9 @@ export default function TaskAIExperiencePage() {
     if (
       !survey.taskAI.experience?.confident ||
       !survey.taskAI.experience?.creative ||
-      !survey.taskAI.experience?.satisfied
+      !survey.taskAI.experience?.satisfied ||
+      !survey.taskAI.experience?.helpful ||
+      !survey.taskAI.experience?.feltDependent
     ) {
       alert('Please complete all experience ratings before continuing.');
       return false;
@@ -278,6 +280,40 @@ export default function TaskAIExperiencePage() {
                   taskAI: {
                     ...prev.taskAI,
                     experience: { ...prev.taskAI.experience, satisfied: value },
+                  },
+                }))
+              }
+              required
+            />
+
+            <LikertItem
+              label="The AI tool was helpful in generating ideas."
+              minLabel="Strongly Disagree"
+              maxLabel="Strongly Agree"
+              value={survey.taskAI.experience?.helpful}
+              onChange={(value) =>
+                setSurvey((prev) => ({
+                  ...prev,
+                  taskAI: {
+                    ...prev.taskAI,
+                    experience: { ...prev.taskAI.experience, helpful: value },
+                  },
+                }))
+              }
+              required
+            />
+
+            <LikertItem
+              label="I felt dependent on the AI while completing the task."
+              minLabel="Strongly Disagree"
+              maxLabel="Strongly Agree"
+              value={survey.taskAI.experience?.feltDependent}
+              onChange={(value) =>
+                setSurvey((prev) => ({
+                  ...prev,
+                  taskAI: {
+                    ...prev.taskAI,
+                    experience: { ...prev.taskAI.experience, feltDependent: value },
                   },
                 }))
               }

@@ -35,7 +35,9 @@ export default function TlxItem({
   const handleFocus = () => setShowValue(true);
   const handleBlur = () => setTimeout(() => setShowValue(false), 500);
 
-  const percentage = value ? ((value - 1) / 20) * 100 : 0;
+  // Calculate percentage position for visual slider (0-100%)
+  // Value ranges from 1-21, so we map it to 0-100%
+  const percentage = value ? ((value - 1) / (21 - 1)) * 100 : 0;
 
   return (
     <div className="space-y-6">
