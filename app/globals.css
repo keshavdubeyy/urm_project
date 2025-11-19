@@ -58,6 +58,10 @@ html {
     @apply apple-button bg-apple-gray-100 text-apple-gray-900 hover:bg-apple-gray-200 active:scale-[0.97] disabled:bg-apple-gray-100 disabled:text-apple-gray-400 disabled:cursor-not-allowed disabled:active:scale-100;
   }
   
+  .apple-button-disabled {
+    @apply apple-button bg-apple-gray-400 text-white cursor-not-allowed shadow-none;
+  }
+  
   /* Input Components */
   .apple-input {
     @apply w-full px-4 py-3.5 rounded-apple border-2 border-apple-gray-300 bg-white text-apple-gray-900 placeholder-apple-gray-500 focus:outline-none focus:ring-2 focus:ring-apple-blue focus:ring-opacity-50 focus:border-apple-blue transition-all duration-200 text-base;

@@ -9,7 +9,7 @@ interface StepLayoutProps {
   currentStep: number;
   totalSteps: number;
   stepTitle: string;
-  onNext?: () => void | boolean;
+  onNext?: () => void | boolean | Promise<void>;
   onBack?: () => void;
   nextHref?: string;
   backHref?: string;
@@ -17,6 +17,7 @@ interface StepLayoutProps {
   backLabel?: string;
   showNext?: boolean;
   showBack?: boolean;
+  nextDisabled?: boolean;
 }
 
 export default function StepLayout({
@@ -32,14 +33,15 @@ export default function StepLayout({
   backLabel = "Back",
   showNext = true,
   showBack = true,
+  nextDisabled = false,
 }: StepLayoutProps) {
   const router = useRouter();
 
-  const handleNext = () => {
+  const handleNext = async () => {
     let shouldProceed = true;
     
     if (onNext) {
-      const result = onNext();
+      const result = await onNext();
       if (result === false) {
         shouldProceed = false;
       }
@@ -117,7 +119,10 @@ export default function StepLayout({
               <button
                 type="button"
                 onClick={handleNext}
-                className="apple-button-primary text-center min-w-[140px] sm:min-w-[160px]"
+                disabled={nextDisabled}
+                className={`text-center min-w-[140px] sm:min-w-[160px] ${
+                  nextDisabled ? 'apple-button-disabled' : 'apple-button-primary'
+                }`}
               >
                 {nextLabel}
               </button>
@@ -125,7 +130,10 @@ export default function StepLayout({
               <button
                 type="button"
                 onClick={handleNext}
-                className="apple-button-primary text-center min-w-[140px] sm:min-w-[160px]"
+                disabled={nextDisabled}
+                className={`text-center min-w-[140px] sm:min-w-[160px] ${
+                  nextDisabled ? 'apple-button-disabled' : 'apple-button-primary'
+                }`}
               >
                 {nextLabel}
               </button>

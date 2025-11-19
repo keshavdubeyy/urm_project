@@ -68,7 +68,7 @@ export default function TaskNoAIExperiencePage() {
       onNext={handleNext}
     >
       <div className="space-y-8">
-        {/* Workload Assessment Section */
+        {/* Workload Assessment Section */}
         <div className="apple-card bg-apple-gray-50 p-8 space-y-6">
           <div>
             <h3 className="apple-heading-4 mb-3">
@@ -185,7 +185,7 @@ export default function TaskNoAIExperiencePage() {
 
           <div className="space-y-6">
             <LikertItem
-              label="During this task, I felt confident in my problem-solving ability."
+              label="I felt confident in my problem-solving ability."
               minLabel="Strongly Disagree"
               maxLabel="Strongly Agree"
               value={survey.taskNoAI.experience?.confident}
@@ -198,13 +198,11 @@ export default function TaskNoAIExperiencePage() {
                   },
                 }))
               }
-              scaleMin={1}
-              scaleMax={5}
               required
             />
 
             <LikertItem
-              label="During this task, I felt creative."
+              label="I felt creative during the task."
               minLabel="Strongly Disagree"
               maxLabel="Strongly Agree"
               value={survey.taskNoAI.experience?.creative}
@@ -217,13 +215,11 @@ export default function TaskNoAIExperiencePage() {
                   },
                 }))
               }
-              scaleMin={1}
-              scaleMax={5}
               required
             />
 
             <LikertItem
-              label="I am satisfied with my performance on this task."
+              label="I was satisfied with my performance on the task."
               minLabel="Strongly Disagree"
               maxLabel="Strongly Agree"
               value={survey.taskNoAI.experience?.satisfied}
@@ -236,8 +232,6 @@ export default function TaskNoAIExperiencePage() {
                   },
                 }))
               }
-              scaleMin={1}
-              scaleMax={5}
               required
             />
           </div>

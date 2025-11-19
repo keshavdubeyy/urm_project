@@ -4,7 +4,7 @@ import React from "react";
 
 interface TextInputProps {
   label: string;
-  name: string;
+  name?: string;
   value: string | number | undefined;
   onChange: (value: string) => void;
   type?: "text" | "number" | "email";
@@ -12,6 +12,7 @@ interface TextInputProps {
   required?: boolean;
   min?: number;
   max?: number;
+  error?: string | null;
 }
 
 export default function TextInput({
@@ -24,6 +25,7 @@ export default function TextInput({
   required = false,
   min,
   max,
+  error,
 }: TextInputProps) {
   return (
     <div className="space-y-2.5">
@@ -41,8 +43,9 @@ export default function TextInput({
         required={required}
         min={min}
         max={max}
-        className="apple-input"
+        className={`apple-input ${error ? 'border-red-500' : ''}`}
       />
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 }

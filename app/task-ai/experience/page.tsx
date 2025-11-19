@@ -52,9 +52,7 @@ export default function TaskAIExperiencePage() {
     if (
       !survey.taskAI.experience?.confident ||
       !survey.taskAI.experience?.creative ||
-      !survey.taskAI.experience?.satisfied ||
-      !survey.taskAI.experience?.helpful ||
-      !survey.taskAI.experience?.feltDependent
+      !survey.taskAI.experience?.satisfied
     ) {
       alert('Please complete all experience ratings before continuing.');
       return false;
@@ -84,7 +82,42 @@ export default function TaskAIExperiencePage() {
       onNext={handleNext}
     >
       <div className="space-y-8">
-        {/* Workload Assessment Section */
+        {/* Ideas from AI Section */}
+        <div className="apple-card bg-apple-gray-50 p-8 space-y-6">
+          <div>
+            <h3 className="apple-heading-4 mb-3">
+              Ideas from AI
+            </h3>
+            <p className="apple-caption mb-6">
+              How many of the ideas you submitted were taken directly from the AI suggestions?
+            </p>
+          </div>
+
+          <TextInput
+            label="Number of ideas from AI (0-50)"
+            type="number"
+            min={0}
+            max={50}
+            placeholder="Enter a number between 0 and 50"
+            value={survey.taskAI.ideasFromAI?.toString() || ""}
+            onChange={(value) => {
+              const numValue = value === "" ? undefined : parseInt(value, 10);
+              if (numValue !== undefined && (isNaN(numValue) || numValue < 0 || numValue > 50)) {
+                setIdeasError("Please enter a number between 0 and 50");
+              } else {
+                setIdeasError(null);
+                setSurvey((prev) => ({
+                  ...prev,
+                  taskAI: { ...prev.taskAI, ideasFromAI: numValue },
+                }));
+              }
+            }}
+            error={ideasError}
+            required
+          />
+        </div>
+
+        {/* Workload Assessment Section */}
         <div className="apple-card bg-apple-gray-50 p-8 space-y-6">
           <div>
             <h3 className="apple-heading-4 mb-3">
@@ -214,13 +247,11 @@ export default function TaskAIExperiencePage() {
                   },
                 }))
               }
-              scaleMin={1}
-              scaleMax={5}
               required
             />
 
             <LikertItem
-              label="I felt creative."
+              label="I felt creative during the task."
               minLabel="Strongly Disagree"
               maxLabel="Strongly Agree"
               value={survey.taskAI.experience?.creative}
@@ -233,13 +264,11 @@ export default function TaskAIExperiencePage() {
                   },
                 }))
               }
-              scaleMin={1}
-              scaleMax={5}
               required
             />
 
             <LikertItem
-              label="I am satisfied with my performance on this task."
+              label="I was satisfied with my performance on the task."
               minLabel="Strongly Disagree"
               maxLabel="Strongly Agree"
               value={survey.taskAI.experience?.satisfied}
@@ -252,102 +281,8 @@ export default function TaskAIExperiencePage() {
                   },
                 }))
               }
-              scaleMin={1}
-              scaleMax={5}
               required
             />
-
-            <LikertItem
-              label="The AI tool was helpful in generating ideas."
-              minLabel="Strongly Disagree"
-              maxLabel="Strongly Agree"
-              value={survey.taskAI.experience?.helpful}
-              onChange={(value) =>
-                setSurvey((prev) => ({
-                  ...prev,
-                  taskAI: {
-                    ...prev.taskAI,
-                    experience: { ...prev.taskAI.experience, helpful: value },
-                  },
-                }))
-              }
-              scaleMin={1}
-              scaleMax={5}
-              required
-            />
-
-            <LikertItem
-              label="I felt dependent on the AI while completing the task."
-              minLabel="Strongly Disagree"
-              maxLabel="Strongly Agree"
-              value={survey.taskAI.experience?.feltDependent}
-              onChange={(value) =>
-                setSurvey((prev) => ({
-                  ...prev,
-                  taskAI: {
-                    ...prev.taskAI,
-                    experience: { ...prev.taskAI.experience, feltDependent: value },
-                  },
-                }))
-              }
-              scaleMin={1}
-              scaleMax={5}
-              required
-            />
-          </div>
-        </div>
-
-        {/* AI Usage Section */}
-        <div className="apple-card bg-apple-gray-50 p-8 space-y-6">
-          <div>
-            <h3 className="apple-heading-4 mb-3">
-              AI Usage
-            </h3>
-            <p className="apple-caption mb-6">
-              Please tell us about how you used AI during the task.
-            </p>
-          </div>
-
-          <div>
-            <TextInput
-              label="How many ideas did you take directly from the AI?"
-              name="ideasFromAI"
-              type="number"
-              value={survey.taskAI.ideasFromAI}
-              onChange={(value) => {
-                const numValue = parseInt(value);
-                // Enforce min/max constraints
-                if (value === '' || value === undefined) {
-                  setIdeasError(null);
-                  setSurvey((prev) => ({
-                    ...prev,
-                    taskAI: {
-                      ...prev.taskAI,
-                      ideasFromAI: undefined,
-                    },
-                  }));
-                } else if (isNaN(numValue) || numValue < 0 || numValue > 50) {
-                  setIdeasError('Please enter a number between 0 and 50');
-                  // Don't update the survey state with invalid value
-                } else {
-                  setIdeasError(null);
-                  setSurvey((prev) => ({
-                    ...prev,
-                    taskAI: {
-                      ...prev.taskAI,
-                      ideasFromAI: numValue,
-                    },
-                  }));
-                }
-              }}
-              placeholder="Enter a number between 0-50"
-              min={0}
-              max={50}
-              required
-            />
-            {ideasError && (
-              <p className="mt-2 apple-caption text-red-600 font-medium">{ideasError}</p>
-            )}
           </div>
         </div>
       </div>
