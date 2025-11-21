@@ -153,7 +153,7 @@ export default function DemographicsPage() {
 
           {/* Education Level */}
           <RadioGroup
-            label="What is your highest level of education / current education?"
+            label="What is your current education?"
             name="educationLevel"
             options={educationOptions}
             value={survey.educationLevel}
