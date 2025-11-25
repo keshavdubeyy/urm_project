@@ -104,6 +104,8 @@ export default function DashboardPage() {
 
   const fetchData = useCallback(async (silent = false) => {
     try {
+      console.log(`[Dashboard] Starting ${silent ? 'silent' : 'manual'} fetch...`);
+      
       if (!silent) {
         setLoading(true);
         setError(null);
@@ -120,23 +122,28 @@ export default function DashboardPage() {
       
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Dashboard API error:', errorData);
+        console.error('[Dashboard] API error:', errorData);
         throw new Error(
           errorData.details || errorData.error || 'Failed to fetch dashboard data'
         );
       }
       
       const data = await response.json();
-      console.log('Dashboard data loaded:', data.count, 'responses');
+      console.log('[Dashboard] Data loaded:', data.count, 'responses');
+      console.log('[Dashboard] Response IDs:', data.responses.map((r: any) => r.response_id || r.id));
+      
       setResponses(data.responses);
       setStats(calculateStats(data.responses));
       setLastUpdated(new Date());
+      
+      console.log('[Dashboard] State updated successfully');
     } catch (err) {
-      console.error('Dashboard fetch error:', err);
+      console.error('[Dashboard] Fetch error:', err);
       setError(err instanceof Error ? err.message : 'Failed to load data');
     } finally {
       setLoading(false);
       setRefreshing(false);
+      console.log('[Dashboard] Fetch complete');
     }
   }, []);
 
@@ -146,16 +153,26 @@ export default function DashboardPage() {
 
   // Auto-refresh every 30 seconds if enabled
   useEffect(() => {
-    if (!autoRefresh) return;
+    if (!autoRefresh) {
+      console.log('[Dashboard] Auto-refresh disabled');
+      return;
+    }
+    
+    console.log('[Dashboard] Auto-refresh enabled - will check every 30 seconds');
     
     const interval = setInterval(() => {
+      console.log('[Dashboard] Auto-refresh triggered');
       fetchData(true); // Silent refresh
     }, 30000); // 30 seconds
 
-    return () => clearInterval(interval);
+    return () => {
+      console.log('[Dashboard] Auto-refresh cleanup');
+      clearInterval(interval);
+    };
   }, [autoRefresh, fetchData]);
 
   const handleManualRefresh = () => {
+    console.log('[Dashboard] Manual refresh clicked');
     fetchData(false);
   };
 
@@ -417,6 +434,9 @@ export default function DashboardPage() {
           <div className="apple-card p-6">
             <div className="apple-caption text-apple-gray-600 mb-2">Total Responses</div>
             <div className="text-3xl font-bold text-apple-blue">{stats?.totalResponses || 0}</div>
+            <div className="apple-caption text-apple-gray-500 mt-1">
+              {responses.length} record(s) loaded
+            </div>
           </div>
           <div className="apple-card p-6">
             <div className="apple-caption text-apple-gray-600 mb-2">Completed</div>
