@@ -203,29 +203,34 @@ export default function AnalysisReportPage() {
   const correlationResults = useCallback(() => {
     if (analyzed.length === 0) return null;
 
-    // No-AI condition
-    const noAIVars = {
-      'AI Dependence': analyzed.map(d => d.diaPreAvg),
-      'Self-Efficacy': analyzed.map(d => d.gseAvg),
-      'Workload (TLX)': analyzed.map(d => d.tlxNoAI.avg),
-      'Ideas Generated': analyzed.map(d => d.ideasNoAI),
-      'Confidence': analyzed.map(d => d.confidenceNoAI),
-    };
+    try {
+      // No-AI condition - convert to array format
+      const noAIVars = [
+        { name: 'AI Dependence', values: analyzed.map(d => d.diaPreAvg) },
+        { name: 'Self-Efficacy', values: analyzed.map(d => d.gseAvg) },
+        { name: 'Workload', values: analyzed.map(d => d.tlxNoAI.avg) },
+        { name: 'Ideas', values: analyzed.map(d => d.ideasNoAI) },
+        { name: 'Confidence', values: analyzed.map(d => d.confidenceNoAI) },
+      ];
 
-    // AI condition
-    const aiVars = {
-      'AI Dependence': analyzed.map(d => d.diaPreAvg),
-      'Self-Efficacy': analyzed.map(d => d.gseAvg),
-      'Workload (TLX)': analyzed.map(d => d.tlxAI.avg),
-      'Ideas Generated': analyzed.map(d => d.ideasAI),
-      'Confidence': analyzed.map(d => d.confidenceAI),
-      'AI Helpfulness': analyzed.map(d => d.helpfulnessAI),
-    };
+      // AI condition
+      const aiVars = [
+        { name: 'AI Dependence', values: analyzed.map(d => d.diaPreAvg) },
+        { name: 'Self-Efficacy', values: analyzed.map(d => d.gseAvg) },
+        { name: 'Workload', values: analyzed.map(d => d.tlxAI.avg) },
+        { name: 'Ideas', values: analyzed.map(d => d.ideasAI) },
+        { name: 'Confidence', values: analyzed.map(d => d.confidenceAI) },
+        { name: 'AI Helpfulness', values: analyzed.map(d => d.helpfulnessAI) },
+      ];
 
-    return {
-      noAI: correlationMatrix(noAIVars),
-      ai: correlationMatrix(aiVars),
-    };
+      return {
+        noAI: correlationMatrix(noAIVars),
+        ai: correlationMatrix(aiVars),
+      };
+    } catch (error) {
+      console.error('Correlation calculation error:', error);
+      return null;
+    }
   }, [analyzed]);
 
   const reliability = reliabilityResults();
@@ -548,7 +553,20 @@ export default function AnalysisReportPage() {
               ].map(({ name, result, direction, context }) => {
                 const sig = getSignificanceLabel(result.pValue);
                 const isSignificant = result.pValue < 0.05;
-                const effectSize = interpretEffectSize(result.effectSize);
+                const effectD = cohensD(analyzed.map(d => 
+                  name === 'Ideas Generated' ? d.ideasNoAI :
+                  name === 'Mental Demand' ? d.tlxNoAI.mental :
+                  name === 'Effort Required' ? d.tlxNoAI.effort :
+                  name === 'Frustration' ? d.tlxNoAI.frustration :
+                  d.confidenceNoAI
+                ), analyzed.map(d => 
+                  name === 'Ideas Generated' ? d.ideasAI :
+                  name === 'Mental Demand' ? d.tlxAI.mental :
+                  name === 'Effort Required' ? d.tlxAI.effort :
+                  name === 'Frustration' ? d.tlxAI.frustration :
+                  d.confidenceAI
+                ));
+                const effectSize = interpretEffectSize(effectD);
                 
                 return (
                   <div 
@@ -574,7 +592,7 @@ export default function AnalysisReportPage() {
                     <div className="flex items-center gap-4 text-sm text-gray-600 mt-3 pt-3 border-t border-gray-200">
                       <span>Effect size: <strong className="text-gray-900">{effectSize}</strong></span>
                       <span>•</span>
-                      <span>Cohen's d = {result.effectSize.toFixed(2)}</span>
+                      <span>Cohen&apos;s d = {effectD.toFixed(2)}</span>
                       <span>•</span>
                       <span>{explainSignificance(result.pValue)}</span>
                     </div>
@@ -603,163 +621,103 @@ export default function AnalysisReportPage() {
 
             <p className="text-gray-600 mb-6">
               Correlations show whether two things tend to go together. Positive means they move in the 
-              same direction; negative means opposite directions. Strength matters: strong (> 0.7), 
-              moderate (0.4-0.7), weak (< 0.4).
+              same direction; negative means opposite directions. Strength matters: strong (&gt; 0.7), 
+              moderate (0.4-0.7), weak (&lt; 0.4).
             </p>
 
             {/* No-AI Condition */}
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Without AI: Key Relationships
+                Without AI: Correlation Matrix
               </h3>
               
-              <div className="space-y-3 mb-6">
-                {correlations.noAI.correlationPairs
-                  .filter(pair => Math.abs(pair.correlation) > 0.3 && pair.var1 !== pair.var2)
-                  .sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation))
-                  .slice(0, 5)
-                  .map((pair, idx) => {
-                    const interp = interpretCorrelation(pair.correlation);
-                    return (
-                      <div key={idx} className={`${interp.color} border border-gray-300 rounded-lg p-4`}>
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="font-medium text-gray-900">
-                              {pair.var1} ↔ {pair.var2}
-                            </div>
-                            <div className="text-sm text-gray-600 mt-1">
-                              {interp.strength.charAt(0).toUpperCase() + interp.strength.slice(1)}{' '}
-                              {interp.direction} relationship
-                            </div>
-                          </div>
-                          <div className="text-right ml-4">
-                            <div className="text-2xl font-bold text-gray-900">
-                              {pair.correlation.toFixed(2)}
-                            </div>
-                            <div className="text-xs text-gray-600">
-                              p = {pair.pValue.toFixed(3)}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="px-3 py-2 text-left font-medium text-gray-700 border">Variable</th>
+                      {correlations.noAI.map(v => (
+                        <th key={v.name} className="px-3 py-2 text-center font-medium text-gray-600 text-xs border">
+                          {v.name}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {correlations.noAI.map((rowVar, i) => (
+                      <tr key={rowVar.name} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="px-3 py-2 font-medium text-gray-900 text-xs border">
+                          {rowVar.name}
+                        </td>
+                        {rowVar.correlations.map((val, j) => {
+                          const interp = interpretCorrelation(val);
+                          return (
+                            <td key={j} className={`px-3 py-2 text-center border ${interp.color}`}>
+                              <div className="font-mono">{val.toFixed(2)}</div>
+                              <div className="text-xs text-gray-600">{interp.strength}</div>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
-              {/* Full matrix */}
-              <details className="mt-4">
-                <summary className="cursor-pointer text-blue-600 hover:text-blue-800 text-sm font-medium">
-                  View full correlation matrix →
-                </summary>
-                <div className="mt-4 overflow-x-auto">
-                  <table className="w-full text-xs">
-                    <thead>
-                      <tr className="bg-gray-100">
-                        <th className="px-2 py-2 text-left font-medium text-gray-700">Variable</th>
-                        {correlations.noAI.variableNames.map(name => (
-                          <th key={name} className="px-2 py-2 text-center font-medium text-gray-600 text-xs">
-                            {name}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {correlations.noAI.matrix.map((row, i) => (
-                        <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                          <td className="px-2 py-2 font-medium text-gray-900 text-xs">
-                            {correlations.noAI.variableNames[i]}
-                          </td>
-                          {row.map((val, j) => {
-                            const interp = interpretCorrelation(val);
-                            return (
-                              <td key={j} className={`px-2 py-2 text-center ${interp.color}`}>
-                                {val.toFixed(2)}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </details>
+              <div className="mt-4 text-sm text-gray-600">
+                <p>
+                  <strong>Key insight:</strong> Look for values far from 0 (strong correlations). 
+                  Positive means variables move together; negative means they move in opposite directions.
+                </p>
+              </div>
             </div>
 
             {/* AI Condition */}
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                With AI: Key Relationships
+                With AI: Correlation Matrix
               </h3>
               
-              <div className="space-y-3 mb-6">
-                {correlations.ai.correlationPairs
-                  .filter(pair => Math.abs(pair.correlation) > 0.3 && pair.var1 !== pair.var2)
-                  .sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation))
-                  .slice(0, 5)
-                  .map((pair, idx) => {
-                    const interp = interpretCorrelation(pair.correlation);
-                    return (
-                      <div key={idx} className={`${interp.color} border border-gray-300 rounded-lg p-4`}>
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="font-medium text-gray-900">
-                              {pair.var1} ↔ {pair.var2}
-                            </div>
-                            <div className="text-sm text-gray-600 mt-1">
-                              {interp.strength.charAt(0).toUpperCase() + interp.strength.slice(1)}{' '}
-                              {interp.direction} relationship
-                            </div>
-                          </div>
-                          <div className="text-right ml-4">
-                            <div className="text-2xl font-bold text-gray-900">
-                              {pair.correlation.toFixed(2)}
-                            </div>
-                            <div className="text-xs text-gray-600">
-                              p = {pair.pValue.toFixed(3)}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="px-3 py-2 text-left font-medium text-gray-700 border">Variable</th>
+                      {correlations.ai.map(v => (
+                        <th key={v.name} className="px-3 py-2 text-center font-medium text-gray-600 text-xs border">
+                          {v.name}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {correlations.ai.map((rowVar, i) => (
+                      <tr key={rowVar.name} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="px-3 py-2 font-medium text-gray-900 text-xs border">
+                          {rowVar.name}
+                        </td>
+                        {rowVar.correlations.map((val, j) => {
+                          const interp = interpretCorrelation(val);
+                          return (
+                            <td key={j} className={`px-3 py-2 text-center border ${interp.color}`}>
+                              <div className="font-mono">{val.toFixed(2)}</div>
+                              <div className="text-xs text-gray-600">{interp.strength}</div>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
-              <details className="mt-4">
-                <summary className="cursor-pointer text-blue-600 hover:text-blue-800 text-sm font-medium">
-                  View full correlation matrix →
-                </summary>
-                <div className="mt-4 overflow-x-auto">
-                  <table className="w-full text-xs">
-                    <thead>
-                      <tr className="bg-gray-100">
-                        <th className="px-2 py-2 text-left font-medium text-gray-700">Variable</th>
-                        {correlations.ai.variableNames.map(name => (
-                          <th key={name} className="px-2 py-2 text-center font-medium text-gray-600 text-xs">
-                            {name}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {correlations.ai.matrix.map((row, i) => (
-                        <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                          <td className="px-2 py-2 font-medium text-gray-900 text-xs">
-                            {correlations.ai.variableNames[i]}
-                          </td>
-                          {row.map((val, j) => {
-                            const interp = interpretCorrelation(val);
-                            return (
-                              <td key={j} className={`px-2 py-2 text-center ${interp.color}`}>
-                                {val.toFixed(2)}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </details>
+              <div className="mt-4 text-sm text-gray-600">
+                <p>
+                  <strong>Compare with No-AI:</strong> Notice how the relationships between variables 
+                  change when AI is available. This reveals how AI reshapes the connections between 
+                  self-efficacy, workload, and performance.
+                </p>
+              </div>
             </div>
           </section>
         )}
