@@ -50,7 +50,7 @@ export default function Home() {
           <h2 className="apple-heading-3">1. CONSENT FORM</h2>
           <div className="space-y-1">
             <p className="apple-body font-medium">Research Contact:</p>
-            <p className="apple-body">Student Researcher: Aasritha Kalluri, Kaushal Negi, Keshav Dubey</p>
+            <p className="apple-body">Student Researcher: Kaushal Negi, Keshav Dubey</p>
             <p className="apple-body">Supervisor: Dr. Priyanka Srivastava</p>
           </div>
         </div>
