@@ -87,8 +87,15 @@ export default function AnalysisReportPage() {
     return data
       .filter(r => r.end_timestamp)
       .map(r => {
-        const parseJSON = (str: string) => {
-          try { return str ? JSON.parse(str) : {}; } catch { return {}; }
+        const parseJSON = (str: string | null | undefined) => {
+          if (!str) return {};
+          try { 
+            const parsed = JSON.parse(str);
+            return typeof parsed === 'object' ? parsed : {};
+          } catch { 
+            console.warn('Failed to parse JSON:', str);
+            return {}; 
+          }
         };
 
         const diaPre = parseJSON(r.dia_pre);
@@ -101,16 +108,31 @@ export default function AnalysisReportPage() {
         const taskNoAI = parseJSON(r.task_no_ai);
         const taskAI = parseJSON(r.task_ai);
 
-        // Count ideas
-        const noAIIdeas = (taskNoAI.responseText || "").split('\n').filter((l: string) => l.trim().length > 0);
-        const aiIdeas = (taskAI.responseText || "").split('\n').filter((l: string) => l.trim().length > 0);
+        console.log('Parsed data for participant:', r.response_id, {
+          diaPre: Object.keys(diaPre).length,
+          gse: Object.keys(gse).length,
+          tlxNoAI: Object.keys(tlxNoAI).length,
+          tlxAI: Object.keys(tlxAI).length,
+          expNoAI, expAI
+        });
 
-        // Calculate averages
-        const diaPreAvg = Object.values(diaPre).reduce((sum: number, val: any) => sum + Number(val), 0) / Object.keys(diaPre).length;
-        const diaPostAvg = Object.values(diaPost).reduce((sum: number, val: any) => sum + Number(val), 0) / Object.keys(diaPost).length;
-        const gseAvg = Object.values(gse).reduce((sum: number, val: any) => sum + Number(val), 0) / Object.keys(gse).length;
-        const tlxNoAIAvg = Object.values(tlxNoAI).reduce((sum: number, val: any) => sum + Number(val), 0) / 6;
-        const tlxAIAvg = Object.values(tlxAI).reduce((sum: number, val: any) => sum + Number(val), 0) / 6;
+        // Count ideas
+        const noAIIdeas = (taskNoAI.responseText || taskNoAI.ideas || "").split('\n').filter((l: string) => l.trim().length > 0);
+        const aiIdeas = (taskAI.responseText || taskAI.ideas || "").split('\n').filter((l: string) => l.trim().length > 0);
+
+        // Calculate averages with validation
+        const calculateAverage = (obj: any, expectedCount?: number) => {
+          const values = Object.values(obj).filter(v => v !== null && v !== undefined && !isNaN(Number(v)));
+          if (values.length === 0) return 0;
+          const sum = values.reduce((sum: number, val: any) => sum + Number(val), 0);
+          return sum / values.length;
+        };
+
+        const diaPreAvg = calculateAverage(diaPre, 12);
+        const diaPostAvg = calculateAverage(diaPost, 12);
+        const gseAvg = calculateAverage(gse, 10);
+        const tlxNoAIAvg = calculateAverage(tlxNoAI, 6);
+        const tlxAIAvg = calculateAverage(tlxAI, 6);
 
         return {
           participantId: r.response_id,
@@ -123,30 +145,30 @@ export default function AnalysisReportPage() {
           ideasNoAI: noAIIdeas.length,
           ideasAI: aiIdeas.length,
           tlxNoAI: {
-            mental: tlxNoAI.mentalDemand || 0,
-            physical: tlxNoAI.physicalDemand || 0,
-            temporal: tlxNoAI.temporalDemand || 0,
-            performance: tlxNoAI.performance || 0,
-            effort: tlxNoAI.effort || 0,
-            frustration: tlxNoAI.frustration || 0,
+            mental: Number(tlxNoAI.mentalDemand || tlxNoAI.mental || 0),
+            physical: Number(tlxNoAI.physicalDemand || tlxNoAI.physical || 0),
+            temporal: Number(tlxNoAI.temporalDemand || tlxNoAI.temporal || 0),
+            performance: Number(tlxNoAI.performance || 0),
+            effort: Number(tlxNoAI.effort || 0),
+            frustration: Number(tlxNoAI.frustration || 0),
             avg: tlxNoAIAvg
           },
           tlxAI: {
-            mental: tlxAI.mentalDemand || 0,
-            physical: tlxAI.physicalDemand || 0,
-            temporal: tlxAI.temporalDemand || 0,
-            performance: tlxAI.performance || 0,
-            effort: tlxAI.effort || 0,
-            frustration: tlxAI.frustration || 0,
+            mental: Number(tlxAI.mentalDemand || tlxAI.mental || 0),
+            physical: Number(tlxAI.physicalDemand || tlxAI.physical || 0),
+            temporal: Number(tlxAI.temporalDemand || tlxAI.temporal || 0),
+            performance: Number(tlxAI.performance || 0),
+            effort: Number(tlxAI.effort || 0),
+            frustration: Number(tlxAI.frustration || 0),
             avg: tlxAIAvg
           },
-          confidenceNoAI: expNoAI.confidence || 0,
-          confidenceAI: expAI.confidence || 0,
-          satisfactionNoAI: expNoAI.satisfaction || 0,
-          satisfactionAI: expAI.satisfaction || 0,
-          creativityNoAI: expNoAI.creativity || 0,
-          creativityAI: expAI.creativity || 0,
-          helpfulnessAI: expAI.aiHelpfulness || 0,
+          confidenceNoAI: Number(expNoAI.confidence || 0),
+          confidenceAI: Number(expAI.confidence || 0),
+          satisfactionNoAI: Number(expNoAI.satisfaction || 0),
+          satisfactionAI: Number(expAI.satisfaction || 0),
+          creativityNoAI: Number(expNoAI.creativity || 0),
+          creativityAI: Number(expAI.creativity || 0),
+          helpfulnessAI: Number(expAI.aiHelpfulness || expAI.helpful || 0),
           diaPre: Object.values(diaPre).map(Number),
           diaPost: Object.values(diaPost).map(Number),
           gse: Object.values(gse).map(Number),
@@ -328,6 +350,31 @@ export default function AnalysisReportPage() {
           </div>
         </section>
 
+        {/* Debug Section - Only show if data issues detected */}
+        {(analyzed.some(d => d.tlxNoAI.avg === 0 && d.tlxAI.avg === 0) || 
+          (reliability && reliability.gseAlpha < 0)) && (
+          <section className="bg-red-50 border-2 border-red-300 rounded-xl p-6 mb-8">
+            <h2 className="text-xl font-bold text-red-900 mb-4 flex items-center gap-3">
+              <span>⚠️</span>
+              Data Issues Detected
+            </h2>
+            <div className="space-y-3 text-sm">
+              <p className="text-red-800">
+                <strong>Issues found:</strong> Some data appears to be missing or incorrectly parsed from the database.
+              </p>
+              <div className="bg-white rounded p-4 font-mono text-xs">
+                <div>Sample participant data structure:</div>
+                <pre className="mt-2 text-gray-600">
+                  {JSON.stringify(analyzed[0], null, 2).substring(0, 500)}...
+                </pre>
+              </div>
+              <p className="text-red-700">
+                This suggests the JSON parsing from Supabase may need adjustment to match the actual data structure.
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* Section 2: Data Quality */}
         <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
@@ -382,8 +429,14 @@ export default function AnalysisReportPage() {
 
               <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-sm text-yellow-800">
-                  <strong>What this means:</strong> All scales show acceptable to excellent reliability, 
-                  meaning we can trust the measurements. The results below are based on solid data.
+                  <strong>Data Quality Alert:</strong>{' '}
+                  {reliability.gseAlpha < 0 || reliability.diaPostAlpha < 0.5 ? (
+                    <>Some scales show poor reliability, which means we should interpret results with caution. 
+                    This could indicate incomplete data or measurement issues.</>
+                  ) : (
+                    <>Most scales show acceptable to excellent reliability, 
+                    meaning we can trust the measurements. The results below are based on solid data.</>
+                  )}
                 </p>
               </div>
             </div>
