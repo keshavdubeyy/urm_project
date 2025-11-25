@@ -9,22 +9,14 @@ export default function TaskAIPage() {
   const router = useRouter();
   const { survey, setSurvey } = useSurvey();
 
-  // Determine if this is task 1 or task 2 based on experimental condition
+  // Task 2 is always AI (fixed order)
   const condition = survey.experimentalCondition;
-  const isTask1 = condition?.task1.condition === "AI";
-  const isTask2 = condition?.task2.condition === "AI";
-  
-  // Get task details based on which task this is
-  const taskDetails = condition && isTask1 
-    ? getTaskDetails(condition, 1)
-    : condition && isTask2 
-    ? getTaskDetails(condition, 2)
-    : null;
+  const taskDetails = condition ? getTaskDetails(condition, 2) : null;
 
   // Fallback for missing condition
   const object = taskDetails?.object || "Paperclip";
-  const objectLabel = taskDetails?.objectLabel || "Object A";
-  const taskNumber = isTask1 ? "1" : isTask2 ? "2" : "B";
+  const objectLabel = taskDetails?.objectLabel || "Object B";
+  const taskNumber = "2";
   const objectEmoji = object === "Paperclip" ? "📎✨" : "🧱✨";
 
   const handleStartTask = () => {
@@ -38,24 +30,16 @@ export default function TaskAIPage() {
     router.push("/task-ai/activity");
   };
 
-  // Determine back href based on experimental condition
+  // Task 2 always goes back to Task 1 experience page (No-AI)
   const getBackHref = () => {
-    if (!condition) return "/pre-task";
-    
-    const navigation = getTaskNavigation(condition);
-    if (isTask1) {
-      return "/pre-task";
-    } else {
-      // This is task 2, so back should go to task 1 experience page
-      return navigation.isFirstTaskNoAI ? "/task-no-ai/experience" : "/task-ai/experience";
-    }
+    return "/task-no-ai/experience";
   };
 
   return (
     <StepLayout
-      currentStep={isTask1 ? 3 : 5}
+      currentStep={5}
       totalSteps={7}
-      stepTitle={`Task ${taskNumber} — Uses for ${object.toUpperCase()} (${objectLabel}) - With AI`}
+      stepTitle={`Task ${taskNumber} — Uses for BRICK - Post-AI`}
       backHref={getBackHref()}
       showNext={false}
     >
@@ -70,7 +54,7 @@ export default function TaskAIPage() {
               <ul className="space-y-3 apple-body text-green-800">
                 <li className="flex items-start gap-3">
                   <span className="text-green-600 font-bold text-lg">•</span>
-                  <span>For the next <strong>1.5 minutes</strong>, list as many uses as you can for <strong>{object.toUpperCase()} ({objectLabel}) with AI support</strong>.</span>
+                  <span>For the next <strong>1.5 minutes</strong>, list as many uses as you can for <strong>BRICK with AI support</strong>.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-600 font-bold text-lg">•</span>

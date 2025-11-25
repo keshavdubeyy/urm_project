@@ -77,15 +77,6 @@ export default function LikertItem({
                 {value === val && (
                   <div className="absolute -bottom-3 w-2 h-2 bg-apple-blue rounded-full animate-scale-in" />
                 )}
-                
-                {/* Hover Label */}
-                <div className={`mt-3 transition-opacity duration-200 ${
-                  value === val ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
-                }`}>
-                  <span className="apple-caption text-apple-gray-600 font-medium">
-                    {val === scaleMin ? minLabel.split(' ')[0] : val === scaleMax ? maxLabel.split(' ')[0] : ''}
-                  </span>
-                </div>
               </label>
             ))}
           </div>

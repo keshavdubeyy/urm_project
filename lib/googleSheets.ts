@@ -92,10 +92,11 @@ export const formatSurveyForSheets = (survey: SurveyResponse & { id?: string; cr
     survey.diaPost?.needValidation || '',
     survey.diaPost?.fearReplacement || '',
     // Mood Post
+    survey.moodPost?.tense || '',
+    survey.moodPost?.fatigued || '',
+    survey.moodPost?.anxious || '',
+    survey.moodPost?.vigorous || '',
     survey.moodPost?.confident || '',
-    survey.moodPost?.stressed || '',
-    survey.moodPost?.satisfied || '',
-    survey.moodPost?.creative || '',
     // Reflections
     survey.reflections?.easierTask || '',
     survey.reflections?.aiThoughtProcess || '',
@@ -160,7 +161,7 @@ export const createSheetsHeader = async (): Promise<boolean> => {
       'taskAI_tlx_mental', 'taskAI_tlx_physical', 'taskAI_tlx_temporal', 'taskAI_tlx_performance', 'taskAI_tlx_effort', 'taskAI_tlx_frustration',
       'taskAI_experience_confident', 'taskAI_experience_creative', 'taskAI_experience_satisfied', 'taskAI_experience_helpful', 'taskAI_experience_feltDependent',
       'diaPost_unprotected', 'diaPost_leftBehind', 'diaPost_stayUpdated', 'diaPost_needValidation', 'diaPost_fearReplacement',
-      'moodPost_confident', 'moodPost_stressed', 'moodPost_satisfied', 'moodPost_creative',
+      'moodPost_tense', 'moodPost_fatigued', 'moodPost_anxious', 'moodPost_vigorous', 'moodPost_confident',
       'reflections_easierTask', 'reflections_aiThoughtProcess', 'reflections_finalComments',
       'startTimestamp', 'endTimestamp', 'durationSeconds'
     ];

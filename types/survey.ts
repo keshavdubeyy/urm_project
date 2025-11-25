@@ -1,13 +1,13 @@
 export interface ExperimentalCondition {
-  group: "Order A" | "Order B";
-  objectAssignment: "Paperclip=ObjectA" | "Brick=ObjectA";
+  group: "Fixed Order";
+  objectAssignment: "Paperclip" | "Brick";
   task1: {
-    condition: "No-AI" | "AI";
+    condition: "No-AI";
     object: "Paperclip" | "Brick";
     objectLabel: "Object A" | "Object B";
   };
   task2: {
-    condition: "No-AI" | "AI";
+    condition: "AI";
     object: "Paperclip" | "Brick";
     objectLabel: "Object A" | "Object B";
   };
@@ -118,10 +118,11 @@ export interface SurveyResponse {
   };
 
   moodPost: {
+    tense?: number;
+    fatigued?: number;
+    anxious?: number;
+    vigorous?: number;
     confident?: number;
-    stressed?: number;
-    satisfied?: number;
-    creative?: number;
   };
 
   // Reflections

@@ -12,23 +12,15 @@ export default function TaskAIActivityPage() {
   const [isTimerActive, setIsTimerActive] = useState(true);
   const [isTimeUp, setIsTimeUp] = useState(false);
 
-  // Determine task info based on experimental condition
+  // Task 2 is always AI (fixed order)
   const condition = survey.experimentalCondition;
-  const isTask1 = condition?.task1.condition === "AI";
-  const isTask2 = condition?.task2.condition === "AI";
-  
-  // Get task details
-  const taskDetails = condition && isTask1 
-    ? getTaskDetails(condition, 1)
-    : condition && isTask2 
-    ? getTaskDetails(condition, 2)
-    : null;
+  const taskDetails = condition ? getTaskDetails(condition, 2) : null;
 
   // Fallback for missing condition
   const object = taskDetails?.object || "Paperclip";
-  const objectLabel = taskDetails?.objectLabel || "Object A";
-  const taskNumber = isTask1 ? "1" : isTask2 ? "2" : "B";
-  const currentStep = isTask1 ? 3 : 5;
+  const objectLabel = taskDetails?.objectLabel || "Object B";
+  const taskNumber = "2";
+  const currentStep = 5;
 
   const handleTimerComplete = () => {
     setIsTimeUp(true);
@@ -72,7 +64,7 @@ export default function TaskAIActivityPage() {
         {isTimeUp && (
           <div className="apple-error-banner text-center">
             <p className="apple-body text-red-800 font-semibold">
-              ⏰ Time is up! You may review your responses but cannot make further edits.
+              ⏰ Time is up! Please submit your response now.
             </p>
           </div>
         )}
@@ -80,7 +72,7 @@ export default function TaskAIActivityPage() {
         {/* Task content */}
         <div className="apple-card p-8 sm:p-10 lg:p-12">
           <h2 className="apple-heading-3 mb-8">
-            Task {taskNumber} — Uses for {object.toUpperCase()} ({objectLabel}) - With AI
+            Task {taskNumber} — Uses for BRICK - Post-AI
           </h2>
 
           <div className="space-y-6">
@@ -100,9 +92,8 @@ export default function TaskAIActivityPage() {
                     },
                   }))
                 }
-                disabled={isTimeUp}
                 rows={15}
-                className="apple-textarea font-mono text-sm disabled:bg-apple-gray-100 disabled:cursor-not-allowed disabled:opacity-70"
+                className="apple-textarea font-mono text-sm"
                 placeholder="Type or paste your ideas here...&#10;&#10;Example:&#10;- Hold papers together&#10;- Reset button on devices&#10;- Makeshift lock pick&#10;..."
               />
             </div>
@@ -129,10 +120,9 @@ export default function TaskAIActivityPage() {
           <button
             type="button"
             onClick={handleNext}
-            disabled={!isTimeUp}
-            className={!isTimeUp ? "apple-button-secondary cursor-not-allowed opacity-50" : "apple-button-primary text-center min-w-[140px] sm:min-w-[180px]"}
+            className="apple-button-primary text-center min-w-[140px] sm:min-w-[180px]"
           >
-            {isTimeUp ? "Next" : "Complete Task First"}
+            {isTimeUp ? "Next (Time's Up)" : "Submit & Continue"}
           </button>
         </div>
       </div>

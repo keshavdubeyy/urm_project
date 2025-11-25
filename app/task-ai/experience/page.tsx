@@ -12,26 +12,14 @@ export default function TaskAIExperiencePage() {
   const { survey, setSurvey } = useSurvey();
   const [ideasError, setIdeasError] = useState<string | null>(null);
 
-  // Determine task info based on experimental condition
+  // Task 2 is always AI (fixed order)
   const condition = survey.experimentalCondition;
-  const isTask1 = condition?.task1.condition === "AI";
-  const isTask2 = condition?.task2.condition === "AI";
-  
-  const taskNumber = isTask1 ? "1" : isTask2 ? "2" : "B";
-  const currentStep = isTask1 ? 4 : 6;
+  const taskNumber = "2";
+  const currentStep = 6;
 
-  // Determine next page based on experimental condition
+  // After Task 2 (AI), always go to post-study
   const getNextHref = () => {
-    if (!condition) return "/post-study"; // Fallback
-    
-    const navigation = getTaskNavigation(condition);
-    if (isTask1) {
-      // After task 1, go to task 2
-      return navigation.secondTask;
-    } else {
-      // After task 2, go to post-study
-      return "/post-study";
-    }
+    return "/post-study";
   };
 
   const handleNext = () => {

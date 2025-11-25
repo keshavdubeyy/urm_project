@@ -9,22 +9,14 @@ export default function TaskNoAIPage() {
   const router = useRouter();
   const { survey, setSurvey } = useSurvey();
 
-  // Determine if this is task 1 or task 2 based on experimental condition
+  // Task 1 is always No-AI (fixed order)
   const condition = survey.experimentalCondition;
-  const isTask1 = condition?.task1.condition === "No-AI";
-  const isTask2 = condition?.task2.condition === "No-AI";
-  
-  // Get task details based on which task this is
-  const taskDetails = condition && isTask1 
-    ? getTaskDetails(condition, 1)
-    : condition && isTask2 
-    ? getTaskDetails(condition, 2)
-    : null;
+  const taskDetails = condition ? getTaskDetails(condition, 1) : null;
 
   // Fallback for missing condition
   const object = taskDetails?.object || "Paperclip";
   const objectLabel = taskDetails?.objectLabel || "Object A";
-  const taskNumber = isTask1 ? "1" : isTask2 ? "2" : "A";
+  const taskNumber = "1";
   const objectEmoji = object === "Paperclip" ? "📎" : "🧱";
 
   const handleStartTask = () => {
@@ -38,24 +30,16 @@ export default function TaskNoAIPage() {
     router.push("/task-no-ai/activity");
   };
 
-  // Determine back href based on experimental condition
+  // Task 1 always goes back to pre-task
   const getBackHref = () => {
-    if (!condition) return "/pre-task";
-    
-    const navigation = getTaskNavigation(condition);
-    if (isTask1) {
-      return "/pre-task";
-    } else {
-      // This is task 2, so back should go to task 1 experience page
-      return navigation.isFirstTaskNoAI ? "/task-no-ai/experience" : "/task-ai/experience";
-    }
+    return "/pre-task";
   };
 
   return (
     <StepLayout
-      currentStep={isTask1 ? 3 : 5}
+      currentStep={3}
       totalSteps={7}
-      stepTitle={`Task ${taskNumber} — Uses for ${object.toUpperCase()} (${objectLabel}) - Without AI`}
+      stepTitle={`Task ${taskNumber} — Uses for BRICK - Pre-AI`}
       backHref={getBackHref()}
       showNext={false}
     >
@@ -70,7 +54,7 @@ export default function TaskNoAIPage() {
               <ul className="space-y-3 apple-body text-orange-800">
                 <li className="flex items-start gap-3">
                   <span className="text-apple-orange font-bold text-lg">•</span>
-                  <span>For the next <strong>1.5 minutes</strong>, list as many uses as you can for <strong>{object.toUpperCase()} ({objectLabel})</strong>.</span>
+                  <span>For the next <strong>1.5 minutes</strong>, list as many uses as you can for <strong>BRICK</strong>.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-apple-orange font-bold text-lg">•</span>

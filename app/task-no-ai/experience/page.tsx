@@ -9,26 +9,14 @@ import { getTaskNavigation, getTaskDetails } from "@/lib/experimentalDesign";
 export default function TaskNoAIExperiencePage() {
   const { survey, setSurvey } = useSurvey();
 
-  // Determine task info based on experimental condition
+  // Task 1 is always No-AI (fixed order)
   const condition = survey.experimentalCondition;
-  const isTask1 = condition?.task1.condition === "No-AI";
-  const isTask2 = condition?.task2.condition === "No-AI";
-  
-  const taskNumber = isTask1 ? "1" : isTask2 ? "2" : "A";
-  const currentStep = isTask1 ? 4 : 6;
+  const taskNumber = "1";
+  const currentStep = 4;
 
-  // Determine next page based on experimental condition
+  // After Task 1 (No-AI), always go to Task 2 (AI)
   const getNextHref = () => {
-    if (!condition) return "/task-ai"; // Fallback
-    
-    const navigation = getTaskNavigation(condition);
-    if (isTask1) {
-      // After task 1, go to task 2
-      return navigation.secondTask;
-    } else {
-      // After task 2, go to post-study
-      return "/post-study";
-    }
+    return "/task-ai";
   };
 
   const handleNext = () => {

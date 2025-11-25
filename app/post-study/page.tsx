@@ -167,53 +167,66 @@ export default function PostStudyPage() {
 
           <div className="space-y-6">
             <LikertItem
-              label="How confident do you feel right now?"
-              minLabel="Very low"
-              maxLabel="Very high"
+              label="I feel tense — You feel tight, stiff, or under pressure."
+              minLabel="Not at all"
+              maxLabel="Extremely"
+              value={survey.moodPost.tense}
+              onChange={(value) =>
+                setSurvey((prev) => ({
+                  ...prev,
+                  moodPost: { ...prev.moodPost, tense: value },
+                }))
+              }
+            />
+
+            <LikertItem
+              label="I feel fatigued — You feel tired, drained, or low on energy."
+              minLabel="Not at all"
+              maxLabel="Extremely"
+              value={survey.moodPost.fatigued}
+              onChange={(value) =>
+                setSurvey((prev) => ({
+                  ...prev,
+                  moodPost: { ...prev.moodPost, fatigued: value },
+                }))
+              }
+            />
+
+            <LikertItem
+              label="I feel anxious — You feel nervous, tense, or uneasy."
+              minLabel="Not at all"
+              maxLabel="Extremely"
+              value={survey.moodPost.anxious}
+              onChange={(value) =>
+                setSurvey((prev) => ({
+                  ...prev,
+                  moodPost: { ...prev.moodPost, anxious: value },
+                }))
+              }
+            />
+
+            <LikertItem
+              label="I feel vigorous — You feel active, energetic, and ready."
+              minLabel="Not at all"
+              maxLabel="Extremely"
+              value={survey.moodPost.vigorous}
+              onChange={(value) =>
+                setSurvey((prev) => ({
+                  ...prev,
+                  moodPost: { ...prev.moodPost, vigorous: value },
+                }))
+              }
+            />
+
+            <LikertItem
+              label="I feel confident."
+              minLabel="Not at all"
+              maxLabel="Extremely"
               value={survey.moodPost.confident}
               onChange={(value) =>
                 setSurvey((prev) => ({
                   ...prev,
                   moodPost: { ...prev.moodPost, confident: value },
-                }))
-              }
-            />
-
-            <LikertItem
-              label="How stressed do you feel right now?"
-              minLabel="Very low"
-              maxLabel="Very high"
-              value={survey.moodPost.stressed}
-              onChange={(value) =>
-                setSurvey((prev) => ({
-                  ...prev,
-                  moodPost: { ...prev.moodPost, stressed: value },
-                }))
-              }
-            />
-
-            <LikertItem
-              label="How satisfied do you feel with your overall performance across both tasks?"
-              minLabel="Very low"
-              maxLabel="Very high"
-              value={survey.moodPost.satisfied}
-              onChange={(value) =>
-                setSurvey((prev) => ({
-                  ...prev,
-                  moodPost: { ...prev.moodPost, satisfied: value },
-                }))
-              }
-            />
-
-            <LikertItem
-              label="How creative do you feel right now?"
-              minLabel="Very low"
-              maxLabel="Very high"
-              value={survey.moodPost.creative}
-              onChange={(value) =>
-                setSurvey((prev) => ({
-                  ...prev,
-                  moodPost: { ...prev.moodPost, creative: value },
                 }))
               }
             />

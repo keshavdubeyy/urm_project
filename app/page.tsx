@@ -51,7 +51,7 @@ export default function Home() {
           <div className="space-y-1">
             <p className="apple-body font-medium">Research Contact:</p>
             <p className="apple-body">Student Researcher: Aasritha Kalluri, Kaushal Negi, Keshav Dubey</p>
-            <p className="apple-body">Supervisor: Ms. Priyanka Srivastava</p>
+            <p className="apple-body">Supervisor: Dr. Priyanka Srivastava</p>
           </div>
         </div>
 
@@ -105,7 +105,7 @@ export default function Home() {
         <div className="space-y-3">
           <h3 className="apple-heading-4">Voluntary Participation</h3>
           <p className="apple-body">
-            <strong>Participation is voluntary.</strong> You may <strong>withdraw or skip any question at any time</strong> without penalty.
+            <strong>Participation is voluntary.</strong> You may <strong>withdraw from the study or skip any question at any time</strong> without penalty.
           </p>
         </div>
 
