@@ -15,6 +15,7 @@ export default function DemographicsPage() {
   const genderOptions = [
     { value: "male", label: "Male" },
     { value: "female", label: "Female" },
+    { value: "transgender", label: "Transgender" },
     { value: "nonbinary", label: "Non-binary" },
     { value: "prefer_not", label: "Prefer not to say" },
     { value: "self_describe", label: "Prefer to self-describe" },

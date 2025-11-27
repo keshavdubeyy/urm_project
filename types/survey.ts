@@ -26,7 +26,7 @@ export interface SurveyResponse {
 
   // Demographics
   age?: number;
-  gender?: "male" | "female" | "nonbinary" | "prefer_not" | "self_describe";
+  gender?: "male" | "female" | "transgender" | "nonbinary" | "prefer_not" | "self_describe";
   genderSelfDescribe?: string;
   educationLevel?: "hs" | "diploma" | "ug" | "pg" | "phd" | "other";
   educationOther?: string;
