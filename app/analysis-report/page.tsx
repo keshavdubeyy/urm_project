@@ -91,9 +91,12 @@ export default function AnalysisReportPage() {
           if (!str) return {};
           try { 
             const parsed = JSON.parse(str);
-            return typeof parsed === 'object' ? parsed : {};
-          } catch { 
-            console.warn('Failed to parse JSON:', str);
+            if (typeof parsed === 'object' && parsed !== null) {
+              return parsed;
+            }
+            return {};
+          } catch (error) { 
+            console.warn('Failed to parse JSON:', str?.substring(0, 100), error);
             return {}; 
           }
         };
@@ -101,36 +104,106 @@ export default function AnalysisReportPage() {
         const diaPre = parseJSON(r.dia_pre);
         const diaPost = parseJSON(r.dia_post);
         const gse = parseJSON(r.gse);
-        const tlxNoAI = parseJSON(r.tlx_no_ai);
-        const tlxAI = parseJSON(r.tlx_ai);
-        const expNoAI = parseJSON(r.experience_no_ai);
-        const expAI = parseJSON(r.experience_ai);
         const taskNoAI = parseJSON(r.task_no_ai);
         const taskAI = parseJSON(r.task_ai);
+        
+        // Extract TLX and experience data from task objects
+        const tlxNoAI = taskNoAI.tlx || {};
+        const tlxAI = taskAI.tlx || {};
+        const expNoAI = taskNoAI.experience || {};
+        const expAI = taskAI.experience || {};
 
+        // Debug logging for GSE data structure issues
+        const gseItems = [gse.solveDifficult, gse.dealUnexpected, gse.handleUnforeseen, gse.severalSolutions];
+        const validGseItems = gseItems.filter(v => v != null && !isNaN(Number(v)));
+        if (validGseItems.length === 0) {
+          console.warn('GSE data missing for participant:', r.response_id, 'Raw GSE:', r.gse, 'Parsed GSE:', gse);
+        } else if (validGseItems.length < 4) {
+          console.warn(`Partial GSE data for participant ${r.response_id}: ${validGseItems.length}/4 items available`);
+        }
+        
         console.log('Parsed data for participant:', r.response_id, {
-          diaPre: Object.keys(diaPre).length,
-          gse: Object.keys(gse).length,
+          diaPreKeys: Object.keys(diaPre),
+          diaPreValues: Object.values(diaPre),
+          gseKeys: Object.keys(gse),
+          gseValues: Object.values(gse),
           tlxNoAI: Object.keys(tlxNoAI).length,
-          tlxAI: Object.keys(tlxAI).length,
-          expNoAI, expAI
+          tlxAI: Object.keys(tlxAI).length
         });
 
-        // Count ideas
-        const noAIIdeas = (taskNoAI.responseText || taskNoAI.ideas || "").split('\n').filter((l: string) => l.trim().length > 0);
-        const aiIdeas = (taskAI.responseText || taskAI.ideas || "").split('\n').filter((l: string) => l.trim().length > 0);
+        // Count ideas more accurately based on the actual response format
+        const countIdeas = (responseText: string): number => {
+          if (!responseText || responseText.trim() === '') return 0;
+          
+          // Split primarily by newlines, as that's how most responses are formatted
+          let items = responseText
+            .split('\n')
+            .map(item => item.trim())
+            .filter(item => 
+              item.length > 2 && // At least 3 characters
+              !item.match(/^[0-9\.\s\-]*$/) && // Not just numbers, dots, spaces, dashes
+              !item.match(/^\s*$/) && // Not just whitespace
+              item.toLowerCase() !== 'no' &&
+              item.toLowerCase() !== 'yes'
+            );
+
+          // If newline splitting doesn't work well, try comma separation
+          if (items.length <= 1 && responseText.includes(',')) {
+            items = responseText
+              .split(',')
+              .map(item => item.trim())
+              .filter(item => item.length > 2);
+          }
+
+          console.log('Idea counting for text:', responseText.substring(0, 100), 'Found ideas:', items.length, items.slice(0, 3));
+          
+          return Math.max(items.length, responseText.trim() ? 1 : 0);
+        };
+
+        const noAIIdeas = countIdeas(taskNoAI.responseText || "");
+        const aiIdeasFromText = countIdeas(taskAI.responseText || "");
+        const aiIdeasFromAI = Number(taskAI.ideasFromAI) || 0; // Direct count from AI task
+        
+        // Use the maximum of text-based count and AI-provided count
+        const aiIdeas = Math.max(aiIdeasFromText, aiIdeasFromAI);
+        
+        console.log('Idea counts for participant', r.response_id, {
+          noAI: noAIIdeas,
+          aiFromText: aiIdeasFromText, 
+          aiFromField: aiIdeasFromAI,
+          aiFinal: aiIdeas
+        });
 
         // Calculate averages with validation
         const calculateAverage = (obj: any, expectedCount?: number) => {
           const values = Object.values(obj).filter(v => v !== null && v !== undefined && !isNaN(Number(v)));
           if (values.length === 0) return 0;
+          if (expectedCount && values.length !== expectedCount) {
+            console.warn(`Expected ${expectedCount} items but got ${values.length} for:`, obj);
+          }
           const sum = values.reduce((sum: number, val: any) => sum + Number(val), 0);
           return sum / values.length;
         };
 
-        const diaPreAvg = calculateAverage(diaPre, 12);
-        const diaPostAvg = calculateAverage(diaPost, 12);
-        const gseAvg = calculateAverage(gse, 10);
+        // Calculate GSE (Self-Efficacy) following the proper formula
+        const calculateGSE = (gseObj: any) => {
+          const items = [
+            gseObj.solveDifficult,
+            gseObj.dealUnexpected, 
+            gseObj.handleUnforeseen,
+            gseObj.severalSolutions
+          ].map(v => Number(v)).filter(v => !isNaN(v));
+          
+          // Practical approach: Average available items if at least 2 responses exist
+          if (items.length >= 2) {
+            return items.reduce((sum, val) => sum + val, 0) / items.length;
+          }
+          return 0; // Insufficient data
+        };
+
+        const diaPreAvg = calculateAverage(diaPre, 5); // DIA has 5 items
+        const diaPostAvg = calculateAverage(diaPost, 5); // DIA has 5 items  
+        const gseAvg = calculateGSE(gse); // GSE has 4 specific items
         const tlxNoAIAvg = calculateAverage(tlxNoAI, 6);
         const tlxAIAvg = calculateAverage(tlxAI, 6);
 
@@ -142,36 +215,41 @@ export default function AnalysisReportPage() {
           diaPreAvg,
           diaPostAvg,
           gseAvg,
-          ideasNoAI: noAIIdeas.length,
-          ideasAI: aiIdeas.length,
+          ideasNoAI: noAIIdeas,
+          ideasAI: aiIdeas,
           tlxNoAI: {
-            mental: Number(tlxNoAI.mentalDemand || tlxNoAI.mental || 0),
-            physical: Number(tlxNoAI.physicalDemand || tlxNoAI.physical || 0),
-            temporal: Number(tlxNoAI.temporalDemand || tlxNoAI.temporal || 0),
+            mental: Number(tlxNoAI.mental || 0),
+            physical: Number(tlxNoAI.physical || 0),
+            temporal: Number(tlxNoAI.temporal || 0),
             performance: Number(tlxNoAI.performance || 0),
             effort: Number(tlxNoAI.effort || 0),
             frustration: Number(tlxNoAI.frustration || 0),
             avg: tlxNoAIAvg
           },
           tlxAI: {
-            mental: Number(tlxAI.mentalDemand || tlxAI.mental || 0),
-            physical: Number(tlxAI.physicalDemand || tlxAI.physical || 0),
-            temporal: Number(tlxAI.temporalDemand || tlxAI.temporal || 0),
+            mental: Number(tlxAI.mental || 0),
+            physical: Number(tlxAI.physical || 0),
+            temporal: Number(tlxAI.temporal || 0),
             performance: Number(tlxAI.performance || 0),
             effort: Number(tlxAI.effort || 0),
             frustration: Number(tlxAI.frustration || 0),
             avg: tlxAIAvg
           },
-          confidenceNoAI: Number(expNoAI.confidence || 0),
-          confidenceAI: Number(expAI.confidence || 0),
-          satisfactionNoAI: Number(expNoAI.satisfaction || 0),
-          satisfactionAI: Number(expAI.satisfaction || 0),
-          creativityNoAI: Number(expNoAI.creativity || 0),
-          creativityAI: Number(expAI.creativity || 0),
-          helpfulnessAI: Number(expAI.aiHelpfulness || expAI.helpful || 0),
-          diaPre: Object.values(diaPre).map(Number),
-          diaPost: Object.values(diaPost).map(Number),
-          gse: Object.values(gse).map(Number),
+          confidenceNoAI: Number(expNoAI.confident || 0),
+          confidenceAI: Number(expAI.confident || 0),
+          satisfactionNoAI: Number(expNoAI.satisfied || 0),
+          satisfactionAI: Number(expAI.satisfied || 0),
+          creativityNoAI: Number(expNoAI.creative || 0),
+          creativityAI: Number(expAI.creative || 0),
+          helpfulnessAI: Number(expAI.helpful || 0),
+          diaPre: Object.values(diaPre).filter(v => v != null && !isNaN(Number(v))).map(Number),
+          diaPost: Object.values(diaPost).filter(v => v != null && !isNaN(Number(v))).map(Number),
+          gse: [
+            gse.solveDifficult,
+            gse.dealUnexpected, 
+            gse.handleUnforeseen,
+            gse.severalSolutions
+          ].map(v => Number(v)).filter(v => !isNaN(v)),
         };
       });
   }, [data]);
@@ -182,9 +260,79 @@ export default function AnalysisReportPage() {
   const reliabilityResults = useCallback(() => {
     if (analyzed.length === 0) return null;
 
-    const diaPreAlpha = calculateCronbachAlpha(analyzed.map(d => d.diaPre));
-    const diaPostAlpha = calculateCronbachAlpha(analyzed.map(d => d.diaPost));
-    const gseAlpha = calculateCronbachAlpha(analyzed.map(d => d.gse));
+    console.log('Reliability calculation - sample data:');
+    console.log('DIA Pre sample:', analyzed.slice(0, 3).map(d => ({ id: d.participantId, items: d.diaPre })));
+    console.log('DIA Post sample:', analyzed.slice(0, 3).map(d => ({ id: d.participantId, items: d.diaPost })));
+    console.log('GSE sample:', analyzed.slice(0, 3).map(d => ({ id: d.participantId, items: d.gse })));
+
+    const diaPreData = analyzed.map(d => d.diaPre).filter(arr => arr && arr.length > 0);
+    const diaPostData = analyzed.map(d => d.diaPost).filter(arr => arr && arr.length > 0);
+    const gseData = analyzed.map(d => d.gse).filter(arr => arr && arr.length > 0);
+
+    console.log('Filtered lengths:', { 
+      diaPreCount: diaPreData.length, 
+      diaPostCount: diaPostData.length, 
+      gseCount: gseData.length 
+    });
+
+    // Check for data quality issues with detailed GSE analysis
+    console.log('GSE Data Quality Check:');
+    console.log('- Valid GSE datasets found:', gseData.length);
+    console.log('- Total participants analyzed:', analyzed.length);
+    
+    if (gseData.length === 0) {
+      console.error('No valid GSE data found! Investigating...');
+      console.log('Sample raw database GSE fields:', data.slice(0, 5).map(r => ({ 
+        id: r.response_id, 
+        gseRaw: r.gse,
+        gseType: typeof r.gse,
+        gseLength: r.gse ? r.gse.length : 0
+      })));
+      console.log('Sample processed GSE data:', analyzed.slice(0, 5).map(d => ({ 
+        id: d.participantId, 
+        gse: d.gse,
+        gseLength: d.gse ? d.gse.length : 0,
+        gseAvg: d.gseAvg 
+      })));
+    } else {
+      console.log(`Found GSE data for ${gseData.length} participants out of ${analyzed.length} total`);
+      console.log('Sample valid GSE data:', gseData.slice(0, 3));
+    }
+
+    // Transpose data: convert from participants x items to items x participants
+    const transposeData = (data: number[][]): number[][] => {
+      if (data.length === 0 || data[0].length === 0) return [];
+      const numItems = data[0].length;
+      const transposed = Array(numItems).fill(null).map(() => [] as number[]);
+      
+      for (let participantIdx = 0; participantIdx < data.length; participantIdx++) {
+        for (let itemIdx = 0; itemIdx < numItems; itemIdx++) {
+          transposed[itemIdx][participantIdx] = data[participantIdx][itemIdx];
+        }
+      }
+      return transposed;
+    };
+
+    // Calculate reliability with better error handling
+    const diaPreAlpha = diaPreData.length > 1 ? calculateCronbachAlpha(transposeData(diaPreData)) : NaN;
+    const diaPostAlpha = diaPostData.length > 1 ? calculateCronbachAlpha(transposeData(diaPostData)) : NaN;
+    let gseAlpha = NaN;
+    
+    if (gseData.length > 1) {
+      gseAlpha = calculateCronbachAlpha(transposeData(gseData));
+    } else if (gseData.length === 0) {
+      console.warn('GSE reliability cannot be calculated: no valid GSE data found');
+      gseAlpha = NaN;
+    } else {
+      console.warn('GSE reliability cannot be calculated: insufficient participants with GSE data');
+      gseAlpha = NaN;
+    }
+
+    console.log('Calculated alphas:', { 
+      diaPreAlpha: isNaN(diaPreAlpha) ? 'N/A' : diaPreAlpha, 
+      diaPostAlpha: isNaN(diaPostAlpha) ? 'N/A' : diaPostAlpha, 
+      gseAlpha: isNaN(gseAlpha) ? 'N/A' : gseAlpha 
+    });
 
     return { diaPreAlpha, diaPostAlpha, gseAlpha };
   }, [analyzed]);
@@ -407,16 +555,25 @@ export default function AnalysisReportPage() {
                   { name: 'AI Dependence (Post)', value: reliability.diaPostAlpha },
                   { name: 'Self-Efficacy', value: reliability.gseAlpha },
                 ].map(({ name, value }) => {
-                  const interp = interpretAlpha(value);
+                  const isInvalid = isNaN(value) || value === null || value === undefined;
+                  const interp = isInvalid ? 
+                    { quality: 'No Data', color: 'text-gray-500', explanation: 'Cannot calculate - insufficient or missing data' } : 
+                    interpretAlpha(value);
+                  
                   return (
-                    <div key={name} className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                    <div key={name} className={`flex items-center justify-between rounded-lg p-4 ${isInvalid ? 'bg-red-50 border border-red-200' : 'bg-gray-50'}`}>
                       <div className="flex-1">
                         <div className="font-medium text-gray-900">{name}</div>
                         <div className="text-sm text-gray-600 mt-1">{interp.explanation}</div>
+                        {isInvalid && (
+                          <div className="text-xs text-red-600 mt-1 italic">
+                            This scale may not have been administered or data may be corrupted
+                          </div>
+                        )}
                       </div>
                       <div className="text-right ml-4">
-                        <div className="text-2xl font-bold text-gray-900">
-                          {value.toFixed(2)}
+                        <div className={`text-2xl font-bold ${isInvalid ? 'text-gray-400' : 'text-gray-900'}`}>
+                          {isInvalid ? 'N/A' : value.toFixed(2)}
                         </div>
                         <div className={`text-sm font-medium ${interp.color}`}>
                           {interp.quality}
@@ -430,7 +587,14 @@ export default function AnalysisReportPage() {
               <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <p className="text-sm text-yellow-800">
                   <strong>Data Quality Alert:</strong>{' '}
-                  {reliability.gseAlpha < 0 || reliability.diaPostAlpha < 0.5 ? (
+                  {isNaN(reliability.gseAlpha) ? (
+                    <>The Self-Efficacy (GSE) scale reliability cannot be calculated, likely because participants did not complete this section or the data was not properly stored. 
+                    The GSE scale measures confidence in handling difficult problems using 4 items: 
+                    (1) solving difficult problems, (2) dealing with unexpected events, (3) handling unforeseen situations, and (4) finding several solutions to problems. {' '}
+                    {reliability.diaPreAlpha < 0.7 || reliability.diaPostAlpha < 0.7 ? 
+                      'Additionally, some AI Dependence scales show lower reliability.' : 
+                      'The AI Dependence scales show good reliability.'}</>
+                  ) : reliability.gseAlpha < 0 || reliability.diaPostAlpha < 0.5 ? (
                     <>Some scales show poor reliability, which means we should interpret results with caution. 
                     This could indicate incomplete data or measurement issues.</>
                   ) : (
@@ -993,6 +1157,13 @@ export default function AnalysisReportPage() {
           >
             📥 Download Data (JSON)
           </button>
+          
+          <a 
+            href="/visualizations"
+            className="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+          >
+            📈 View Interactive Visualizations →
+          </a>
           
           <button
             onClick={() => {

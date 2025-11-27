@@ -69,7 +69,10 @@ export default function TaskNoAIExperiencePage() {
 
           <div className="space-y-6">
             <TlxItem
-              label="How mentally demanding was the task?"
+              label="Mental Demand"
+              description="How mentally demanding was the task?"
+              lowAnchor="Low"
+              highAnchor="High"
               value={survey.taskNoAI.tlx?.mental}
               onChange={(value) =>
                 setSurvey((prev) => ({
@@ -84,7 +87,10 @@ export default function TaskNoAIExperiencePage() {
             />
 
             <TlxItem
-              label="How physically demanding was the task?"
+              label="Physical Demand"
+              description="How physically demanding was the task?"
+              lowAnchor="Low"
+              highAnchor="High"
               value={survey.taskNoAI.tlx?.physical}
               onChange={(value) =>
                 setSurvey((prev) => ({
@@ -99,7 +105,10 @@ export default function TaskNoAIExperiencePage() {
             />
 
             <TlxItem
-              label="How hurried or rushed was the pace of the task?"
+              label="Temporal Demand"
+              description="How hurried or rushed was the pace of the task?"
+              lowAnchor="Low"
+              highAnchor="High"
               value={survey.taskNoAI.tlx?.temporal}
               onChange={(value) =>
                 setSurvey((prev) => ({
@@ -114,7 +123,10 @@ export default function TaskNoAIExperiencePage() {
             />
 
             <TlxItem
-              label="How successful were you in accomplishing what you were asked to do?"
+              label="Performance"
+              description="How successful were you in accomplishing what you were asked to do?"
+              lowAnchor="Good"
+              highAnchor="Poor"
               value={survey.taskNoAI.tlx?.performance}
               onChange={(value) =>
                 setSurvey((prev) => ({
@@ -129,7 +141,10 @@ export default function TaskNoAIExperiencePage() {
             />
 
             <TlxItem
-              label="How hard did you have to work to accomplish your level of performance?"
+              label="Effort"
+              description="How hard did you have to work to accomplish your level of performance?"
+              lowAnchor="Low"
+              highAnchor="High"
               value={survey.taskNoAI.tlx?.effort}
               onChange={(value) =>
                 setSurvey((prev) => ({
@@ -144,7 +159,10 @@ export default function TaskNoAIExperiencePage() {
             />
 
             <TlxItem
-              label="How insecure, discouraged, irritated, stressed, and annoyed were you?"
+              label="Frustration"
+              description="How insecure, discouraged, irritated, stressed, and annoyed were you?"
+              lowAnchor="Low"
+              highAnchor="High"
               value={survey.taskNoAI.tlx?.frustration}
               onChange={(value) =>
                 setSurvey((prev) => ({

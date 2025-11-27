@@ -217,13 +217,13 @@ Each page displays:
 **Task A (No-AI):**
 - Instructions page
 - 3-minute timed creative writing activity
-- NASA-TLX workload assessment (6 dimensions)
+- NASA-TLX workload assessment (6 dimensions, Hart & Staveland's 21-point scale structure)
 - Task experience ratings (4 items)
 
 **Task B (AI):**
 - Instructions page
 - 3-minute timed creative writing with AI placeholder
-- NASA-TLX workload assessment
+- NASA-TLX workload assessment (Hart & Staveland's 21-point scale)
 - Task experience ratings
 - AI usage questions
 

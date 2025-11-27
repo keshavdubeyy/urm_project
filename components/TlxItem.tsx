@@ -7,6 +7,9 @@ interface TlxItemProps {
   value: number | undefined;
   onChange: (value: number) => void;
   required?: boolean;
+  lowAnchor?: string;
+  highAnchor?: string;
+  description?: string;
 }
 
 export default function TlxItem({
@@ -14,6 +17,9 @@ export default function TlxItem({
   value,
   onChange,
   required = false,
+  lowAnchor = "Low",
+  highAnchor = "High",
+  description,
 }: TlxItemProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [showValue, setShowValue] = useState(false);
@@ -66,10 +72,17 @@ export default function TlxItem({
 
         {/* Slider Container */}
         <div className="relative">
-          {/* Labels */}
+          {/* Description */}
+          {description && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800 italic">{description}</p>
+            </div>
+          )}
+
+          {/* Anchor Labels */}
           <div className="flex justify-between mb-3">
-            <span className="apple-caption text-apple-gray-600 font-semibold">Low</span>
-            <span className="apple-caption text-apple-gray-600 font-semibold">High</span>
+            <span className="apple-caption text-apple-gray-600 font-semibold">{lowAnchor}</span>
+            <span className="apple-caption text-apple-gray-600 font-semibold">{highAnchor}</span>
           </div>
 
           {/* Custom Slider */}
@@ -120,13 +133,18 @@ export default function TlxItem({
             </div>
           </div>
 
-          {/* Scale Numbers */}
-          <div className="flex justify-between mt-3 px-1">
-            <span className="apple-caption text-apple-gray-500 font-medium">1</span>
-            <span className="apple-caption text-apple-gray-500 font-medium">5</span>
-            <span className="apple-caption text-apple-gray-500 font-medium">10</span>
-            <span className="apple-caption text-apple-gray-500 font-medium">15</span>
-            <span className="apple-caption text-apple-gray-500 font-medium">21</span>
+          {/* Scale Numbers and Gradations */}
+          <div className="mt-4">
+            <div className="flex justify-between px-1 mb-2">
+              <span className="apple-caption text-apple-gray-500 font-medium">1</span>
+              <span className="apple-caption text-apple-gray-500 font-medium">5</span>
+              <span className="apple-caption text-apple-gray-500 font-medium">10</span>
+              <span className="apple-caption text-apple-gray-500 font-medium">15</span>
+              <span className="apple-caption text-apple-gray-500 font-medium">21</span>
+            </div>
+            <div className="text-xs text-center text-apple-gray-400 mt-2">
+              NASA-TLX 21-point scale • Each major division has Low-Medium-High gradations
+            </div>
           </div>
         </div>
       </div>
